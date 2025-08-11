@@ -25,6 +25,7 @@ packages = [{ include = "cg_examples", from = "src" }]
 
 [project.scripts]
 ex01-hello = "cg_examples.ex01_hello_opengl.__main__:main"
+ex02-test-glut = "cg_examples.ex02_test_glut.__main__:main"
 
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
