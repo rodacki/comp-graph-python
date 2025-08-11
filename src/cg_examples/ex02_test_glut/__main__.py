@@ -1,4 +1,5 @@
 import sys
+import os
 from OpenGL.GL import (
     glClearColor, glClear, GL_COLOR_BUFFER_BIT,
     glMatrixMode, glLoadIdentity, glViewport,
@@ -8,7 +9,7 @@ from OpenGL.GL import (
 from OpenGL.GLUT import (
     glutInit, glutInitDisplayMode, glutInitWindowSize, glutInitWindowPosition,
     glutCreateWindow, glutDisplayFunc, glutReshapeFunc, glutKeyboardFunc,
-    glutMainLoop, glutSwapBuffers,
+    glutMainLoop, glutSwapBuffers,glutLeaveMainLoop,
     GLUT_DOUBLE, GLUT_RGBA, GLUT_DEPTH
 )
 
@@ -53,11 +54,14 @@ def reshape(width: int, height: int) -> None:
         height = 1
     init_gl(width, height)
 
+
 def keyboard(key: bytes, x: int, y: int) -> None:
     """Fecha com ESC."""
     if key == b'\x1b':  # ESC
-        # Encerrar o processo de forma imediata
-        sys.exit(0)
+        try:
+            glutLeaveMainLoop()  # Funciona no FreeGLUT
+        except Exception:
+            os._exit(0)  # Saída imediata se glutLeaveMainLoop não existir
 
 def main() -> None:
     # Inicialização do GLUT
