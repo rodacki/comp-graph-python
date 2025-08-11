@@ -1,0 +1,31 @@
+[project]
+name = "comp-graph-python"
+version = "0.1.0"
+description = "Exemplos de Computação Gráfica em Python"
+authors = [
+    {name = "Paulo Cesar Rodacki Gomes",email = "paulo.gomes@ifc.edu.br"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy (>=2.3.2,<3.0.0)",
+    "PyOpenGL (>=3.1.9,<4.0.0)",
+    "PyOpenGL-accelerate (>=3.1.9,<4.0.0)",
+    "pyglet (>=2.1.6,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "cg_examples", from = "src" }]
+
+[project.scripts]
+ex01-hello = "cg_examples.ex01_hello_opengl.__main__:main"
+
+[tool.poetry.group.moderngl.dependencies]
+moderngl = "^5.12.0"
+
