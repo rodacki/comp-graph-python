@@ -12,7 +12,8 @@ dependencies = [
     "numpy (>=2.3.2,<3.0.0)",
     "PyOpenGL (>=3.1.9,<4.0.0)",
     "PyOpenGL-accelerate (>=3.1.9,<4.0.0)",
-    "pyglet (>=2.1.6,<3.0.0)"
+    "pyglet (>=2.1.6,<3.0.0)",
+    "glfw (>=2.9.0,<3.0.0)"
 ]
 
 
@@ -26,6 +27,8 @@ packages = [{ include = "cg_examples", from = "src" }]
 [project.scripts]
 ex01-hello = "cg_examples.ex01_hello_opengl.__main__:main"
 ex02-test-glut = "cg_examples.ex02_test_glut.__main__:main"
+ex03-tutorial1 = "cg_examples.ex03_opengl_tutorial1.__main__:main"
+ex04-glfw = "cg_examples.ex04_test_glfw.__main__:main"
 
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
