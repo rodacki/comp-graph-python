@@ -341,6 +341,7 @@ def mouseMotion(x,y):
     global red
     global green
     global blue
+    print(x,y)
     wx, wy = getWorldCoords(x,y)
     if sliderR.selector.isSelected and sliderR.isInside(wx, wy):
         sliderR.selector.xc = wx
