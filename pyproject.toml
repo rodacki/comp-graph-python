@@ -30,6 +30,7 @@ ex02-test-glut = "cg_examples.ex02_test_glut.__main__:main"
 ex03-tutorial1 = "cg_examples.ex03_opengl_tutorial1.__main__:main"
 ex04-glfw = "cg_examples.ex04_test_glfw.__main__:main"
 ex05-color = "cg_examples.ex05_ColorPicker.__main__:main"
+ex06-editor = "cg_examples.ex06_2D_editor.__main__:main"
 
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
