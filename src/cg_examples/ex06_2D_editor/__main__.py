@@ -80,8 +80,7 @@ def main():
     glutPassiveMotionFunc(passiveMotion)
     init(stateContext)
     glutMainLoop()
-    print("FIM")
-    exit()
+    
     
 if __name__ == "__main__":
     main()
