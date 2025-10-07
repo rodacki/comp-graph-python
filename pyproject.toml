@@ -14,8 +14,14 @@ dependencies = [
     "PyOpenGL-accelerate (>=3.1.9,<4.0.0)",
     "pyglet (>=2.1.6,<3.0.0)",
     "glfw (>=2.9.0,<3.0.0)",
+    "pyqt5 (>=5.15.11,<6.0.0)",
+    "qtawesome (>=1.4.0,<2.0.0)",
 ]
 
+[project.optional-dependencies]
+mac = [
+  "pyobjc-framework-Cocoa>=10.2,<11.0"
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -31,6 +37,7 @@ ex03-tutorial1 = "cg_examples.ex03_opengl_tutorial1.__main__:main"
 ex04-glfw = "cg_examples.ex04_test_glfw.__main__:main"
 ex05-color = "cg_examples.ex05_ColorPicker.__main__:main"
 ex06-editor = "cg_examples.ex06_2D_editor.__main__:main"
+ex07-pyqt-opengl = "cg_examples.ex07_2D_Editor_Qt.__main__:main"
 
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
