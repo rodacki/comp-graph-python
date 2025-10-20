@@ -9,6 +9,7 @@ from ..model.modelo import Modelo
 @dataclass
 class GlobalDefinitions():
     contents: List[Any] = field(default_factory=list)
+    selected: List[Any] = field(default_factory=list)  # objetos selecionados
     should_exit: bool = False
     left: float = -500.0
     right: float = 500.0
@@ -20,6 +21,7 @@ class GlobalDefinitions():
     poligono: Optional[Any] = None
     circulo: Optional[Any] = None
     modelo: Modelo = field(default_factory=Modelo)
+    selection_tolerance_px: int = 2
 
 
 # class GlobalDefinitions():

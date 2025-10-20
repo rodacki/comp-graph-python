@@ -101,7 +101,7 @@ class AddPointPolygonState(State):
             y = self.context.global_vars.poligono.lastPoint.y
             if self.__lastX != None and self.__lastY != None:
                 glPushAttrib(GL_ENABLE_BIT)
-                glLineStipple(3, 0xAAAA)  # [1]
+                glLineStipple(10, 0xAAAA)  # [1]
                 glEnable(GL_LINE_STIPPLE)
                 glBegin(GL_LINES)
                 glVertex2f(x, y)

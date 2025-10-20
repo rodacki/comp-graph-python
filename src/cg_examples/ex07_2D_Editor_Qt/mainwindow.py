@@ -1,11 +1,12 @@
+# pyright: reportIncompatibleMethodOverride=false
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton
-from PyQt5.QtCore import QTimer, QSize
+from PyQt5.QtCore import QTimer, QSize, Qt, QEvent
+from PyQt5.QtGui import QCursor, QPixmap
 from .view.glcanvas import GLCanvas
 from .state.context import Context
 from .globals.settings import GlobalDefinitions
 import qtawesome as qta
-# qta.load_font('fa', 'fontawesome-webfont.ttf', ':/qtawesome/fonts/fontawesome-webfont-charmap.json')
-
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -13,6 +14,7 @@ class MainWindow(QWidget):
 
         self.setWindowTitle("Editor 2D - PyQt + OpenGL")
         self.setGeometry(200, 200, 800, 800)
+        self._cross_cursor = QCursor(Qt.CursorShape.CrossCursor)
 
         # Variáveis globais e contexto de estados
         self.global_vars = GlobalDefinitions()
@@ -72,13 +74,18 @@ class MainWindow(QWidget):
         self.timer.timeout.connect(self.canvas.update)
         self.timer.start(16)
 
-   
+    # Ao entrar na área do canvas, mude o cursor
+    def enterEvent(self, event: QEvent) -> None:
+        self.setCursor(self._cross_cursor)
+
+    # Ao sair, restaure para o padrão
+    def leaveEvent(self, event: QEvent) -> None:
+        self.unsetCursor()  # volta ao cursor do sistema/janela
+
+    
     # ------------------------------------------------ #
     # Ações dos botões
     # ------------------------------------------------ #
-    # def on_idle(self):
-    #     self.state_context.currentState = self.state_context.idleState
-    #     print("🔵 Estado: Idle")
 
     def on_start_circle(self):
         self.state_context.currentState = self.state_context.initCircleState
@@ -87,21 +94,6 @@ class MainWindow(QWidget):
     def on_start_polygon(self):
         self.state_context.currentState = self.state_context.initPolygonState
         print("🟢 Estado: Iniciar poligono")
-
-    # def on_stop_polygon(self):
-    #     self.state_context.currentState = self.state_context.addPolygonPointState
-    #     print("🟢 Estado: Encerrar poligono")
-
-    # def on_stop_polygon(self):
-    #     poly = self.state_context.global_vars.poligono
-    #     if poly:
-    #         print("🔴 Encerrando polígono")
-    #         self.state_context.global_vars.modelo.addPoligono(poly)
-    #         self.state_context.global_vars.poligono = None
-    #         self.state_context.currentState = self.state_context.idleState
-    #         self.canvas.update()
-    #     else:
-    #         print("⚠️ Nenhum polígono em andamento")
 
     def on_exit(self):
         print("Saindo...")

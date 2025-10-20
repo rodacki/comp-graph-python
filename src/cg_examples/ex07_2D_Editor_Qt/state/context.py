@@ -108,4 +108,24 @@ class Context:
     def mouseMoveEvent(self, event: QMouseEvent):
         self.currentState.mouseMoveEvent(event)
 
+    def clear_selection(self):
+        for obj in self.global_vars.selected:
+            obj.selected = False
+        self.global_vars.selected.clear()
+
+    def select_object(self, obj, additive: bool = False):
+        if not additive:
+            self.clear_selection()
+        if obj not in self.global_vars.selected:
+            obj.selected = True
+            self.global_vars.selected.append(obj)
+
+    def toggle_object(self, obj):
+        if obj in self.global_vars.selected:
+            obj.selected = False
+            self.global_vars.selected.remove(obj)
+        else:
+            obj.selected = True
+            self.global_vars.selected.append(obj)
+
 

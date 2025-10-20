@@ -14,6 +14,7 @@ from .abstractState import State
 from ..view.draw_utils import getWorldCoords
 from ..view.draw_utils import axis
 from PyQt5.QtGui import QMouseEvent, QKeyEvent
+from PyQt5.QtCore import Qt
 
 
 class IdleState(State):
@@ -62,12 +63,42 @@ class IdleState(State):
         #modelo.draw()
         #glutSwapBuffers()
 
+    # def mousePressEvent(self, event: QMouseEvent):
+    #     print("vvvvvvCanvas:", event.x(), event.y())
+    #     viewport = glGetIntegerv(GL_VIEWPORT)
+    #     print("Viewport:", viewport)
+    #     x, y = getWorldCoords(self.context, event.x(), event.y())
+    #     print("World : ", x, y)
+
+
     def mousePressEvent(self, event: QMouseEvent):
-        print("Canvas:", event.x(), event.y())
-        viewport = glGetIntegerv(GL_VIEWPORT)
-        print("Viewport:", viewport)
-        x, y = getWorldCoords(self.context, event.x(), event.y())
-        print("World : ", x, y)
+        print("IdleState: mouse pressed")
+        xw, yw = getWorldCoords(self.context, event.x(), event.y())
+        add = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
+        print(add)
+        hit_obj = None
+        # percorra “de trás pra frente”
+        # círculos
+        for c in reversed(self.context.global_vars.modelo.circulos):
+            if c.hit_test(self.context, xw, yw):
+                hit_obj = c
+                break
+        # polígonos (se ainda não bateu)
+        if hit_obj is None:
+            for p in reversed(self.context.global_vars.modelo.poligonos):
+                if p.hit_test(self.context, xw, yw):
+                    hit_obj = p
+                    break
+
+        if hit_obj is not None:
+            print("Add to selection")
+            self.context.select_object(hit_obj, additive=add)
+        elif not add:
+            print("Clear selection")
+            self.context.clear_selection()
+
+        self.context.canvas.update()
+
 
     def mouseMoveEvent(self, event: QMouseEvent):
         pass

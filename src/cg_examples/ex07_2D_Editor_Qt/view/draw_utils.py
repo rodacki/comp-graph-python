@@ -220,3 +220,31 @@ def getWorldCoords(context, x, y):
     world = np.matmul(invP, vndc)
 
     return world[0], world[1]
+
+def px_to_world(context, axis: str = "avg") -> float:
+    """
+    Converte N pixels (Qt, lógicos) para unidades de mundo.
+    axis: "x", "y" ou "avg" (média aritmética de x/y).
+    """
+    left  = context.global_vars.left
+    right = context.global_vars.right
+    bottom= context.global_vars.bottom
+    top   = context.global_vars.top
+    px    = context.global_vars.selection_tolerance_px
+
+    _, _, vw, vh = glGetIntegerv(GL_VIEWPORT)   # em *pixels físicos*
+    if vw == 0 or vh == 0:
+        return 0.0
+
+    # Fator Retina (mesmo usado em getWorldCoords)
+    ratio = context.global_vars.h / vh          # lógicos → físicos
+
+    sx = (right - left) / vw    # mundo por pixel físico (eixo X)
+    sy = (top - bottom) / vh    # mundo por pixel físico (eixo Y)
+
+    if axis == "x":
+        return px * ratio * sx
+    if axis == "y":
+        return px * ratio * sy
+    # média: boa para testes isotrópicos (círculo, distância ponto-segmento)
+    return px * ratio * 0.5 * (sx + sy)
