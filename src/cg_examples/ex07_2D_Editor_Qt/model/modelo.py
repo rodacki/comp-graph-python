@@ -1,36 +1,66 @@
 
+# from __future__ import annotations
+# from typing import List
+# from .poligono import Poligono
+# from .circulo import Circulo
+
+# # ----------------------------------------------------- #
+# # Classe Modelo: agrega todas as entidades gráficas     #
+# # ----------------------------------------------------- #
+# class Modelo:
+#     def __init__(self):
+#         self._poligonos: List["Poligono"] = []
+#         self._circulos: List["Circulo"] = []
+
+#     # --- mutação ---
+#     def addPoligono(self, poligono: "Poligono") -> None:
+#         self._poligonos.append(poligono)
+
+#     def addCirculo(self, circulo: "Circulo") -> None:
+#         self._circulos.append(circulo)
+
+#     # --- acesso somente-leitura ---
+#     @property
+#     def poligonos(self) -> List["Poligono"]:
+#         return self._poligonos
+
+#     @property
+#     def circulos(self) -> List["Circulo"]:
+#         return self._circulos
+
+#     def draw(self):
+#         for p in self._poligonos:
+#             p.draw()
+#         for c in self._circulos:
+#             c.draw()
+
+# src/cg_examples/ex07_2D_Editor_Qt/model/modelo.py
 from __future__ import annotations
+from dataclasses import dataclass, field
 from typing import List
 from .poligono import Poligono
 from .circulo import Circulo
 
-# ----------------------------------------------------- #
-# Classe Modelo: agrega todas as entidades gráficas     #
-# ----------------------------------------------------- #
+@dataclass
 class Modelo:
-    def __init__(self):
-        self._poligonos: List["Poligono"] = []
-        self._circulos: List["Circulo"] = []
+    _poligonos: List[Poligono] = field(default_factory=list)
+    _circulos: List[Circulo] = field(default_factory=list)
 
-    # --- mutação ---
-    def addPoligono(self, poligono: "Poligono") -> None:
-        self._poligonos.append(poligono)
-
-    def addCirculo(self, circulo: "Circulo") -> None:
-        self._circulos.append(circulo)
-
-    # --- acesso somente-leitura ---
+    # API pública (read-only)
     @property
-    def poligonos(self) -> List["Poligono"]:
+    def poligonos(self) -> List[Poligono]:
         return self._poligonos
 
     @property
-    def circulos(self) -> List["Circulo"]:
+    def circulos(self) -> List[Circulo]:
         return self._circulos
 
-    def draw(self):
-        for p in self._poligonos:
-            p.draw()
-        for c in self._circulos:
-            c.draw()
+    # Mutadores explícitos
+    def addPoligono(self, p: Poligono) -> None:
+        self._poligonos.append(p)
 
+    def addCirculo(self, c: Circulo) -> None:
+        self._circulos.append(c)
+
+    def draw(self):
+        pass

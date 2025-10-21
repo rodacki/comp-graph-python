@@ -93,11 +93,14 @@ class Context:
     #     self.currentState.passiveMotion(x,y)
 
     def display(self):
-        if self.global_vars.should_exit:
-            glutDestroyWindow(self.global_vars.wind)
-            print("Testando exit")
-            return
-        self.currentState.display()
+        pass
+
+    # def display(self):
+    #     if self.global_vars.should_exit:
+    #         glutDestroyWindow(self.global_vars.wind)
+    #         print("Testando exit")
+    #         return
+    #     self.currentState.display()
 
     def reshape(self, width, height):
         self.currentState.reshape(width, height)

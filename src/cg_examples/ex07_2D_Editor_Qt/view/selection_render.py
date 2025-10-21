@@ -1,7 +1,8 @@
 # cg_examples/ex07_2D_Editor_Qt/view/selection_render.py
 from OpenGL.GL import (
-    GL_LINE_LOOP, GL_QUADS, GL_ENABLE_BIT, GL_LINE_STIPPLE, glPopAttrib,
-    glBegin, glEnd, glVertex2f, glColor3f, glLineWidth, glPushAttrib, glLineStipple, glEnable
+    GL_LINE_LOOP, GL_QUADS, GL_ENABLE_BIT, GL_LINE_STIPPLE, 
+    glPopAttrib, glBegin, glEnd, glVertex2f, glColor3f, 
+    glLineWidth, glPushAttrib, glLineStipple, glEnable
 )
 from ..view.draw_utils import px_to_world  # caso precise fallback sem cache
 

@@ -1,15 +1,8 @@
 from OpenGL.GL import (
-    GL_COLOR_BUFFER_BIT, 
-    GL_DEPTH_BUFFER_BIT,
-    glColor3f, 
-    glLoadIdentity, 
-    glClear,
+    GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT,
+    glColor3f, glLoadIdentity, glClear,
 )
-from OpenGL.GLUT import (
-    glutSwapBuffers, 
-    GLUT_LEFT_BUTTON, 
-    GLUT_DOWN,
-)
+
 from .abstractState import State
 from ..view.draw_utils import getWorldCoords
 from ..view.draw_utils import axis
@@ -22,7 +15,7 @@ class InitPolygonState(State):
 
     def __init__(self, context) -> None:
         super().__init__(context)
-   
+
     @property
     def context(self):
         return super().context
@@ -46,24 +39,9 @@ class InitPolygonState(State):
     def mouseMoveEvent(self, event):
         pass
     
-    # def mouse(self, button, state, x, y):
-    #     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
-    #         print("Iniciando poligono")
-    #         wx, wy = getWorldCoords(self.context, x, y)
-    #         p = Ponto(wx, wy)
-    #         poligono = Poligono()
-    #         poligono.addPonto(p)
-            
-    #         self.context.global_vars.poligono = poligono
-    #         self.context.currentState = self.context.addPolygonPointState
-            
-    
     def keyboard(self, key, x, y):
         print("InitPolygonState.keyboard()")
         pass
-
-    
-    
 
     def display(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # type: ignore
@@ -72,4 +50,3 @@ class InitPolygonState(State):
         axis(self.context)
         glColor3f(1.0, 0.0, 3.0)
         self.context.global_vars.modelo.draw()
-        #glutSwapBuffers()

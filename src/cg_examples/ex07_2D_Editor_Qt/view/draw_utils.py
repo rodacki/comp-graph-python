@@ -8,30 +8,9 @@ import numpy as np
 
 from OpenGL.GL import (
     GL_PROJECTION, GL_MODELVIEW, GL_LINES, GL_VIEWPORT,
-    glViewport, glMatrixMode, glLoadIdentity, glOrtho,
+    glMatrixMode, glLoadIdentity, glOrtho,
     glBegin, glEnd, glVertex2f, glColor3f, glGetIntegerv, 
 )
-
-
-
-
-
-# ----------------------------------------------------- #
-# Funcao axis: inicializacao do OpenGL                      #
-# ----------------------------------------------------- #
-# def init(context: "Context"):
-#     right = context.global_vars.right
-#     left = context.global_vars.left
-#     bottom = context.global_vars.bottom
-#     top = context.global_vars.top
-
-#     glViewport(0, 0, 500, 500)
-#     glMatrixMode(GL_PROJECTION)
-#     glLoadIdentity()
-#     glOrtho(left, right, bottom, top, -1.0, 1.0)
-#     glMatrixMode (GL_MODELVIEW)
-#     glLoadIdentity()
-
 
 # ----------------------------------------------------- #
 # Inicialização de projeção/matriz (sem mexer no viewport)
@@ -121,86 +100,6 @@ def axis(context: "Context"):
 #     # Springer, ISBN 978-3-031-28134-1
 #     # págs. 171 e 416
 #      """
-    
-#     viewport = glGetIntegerv(GL_VIEWPORT)
-#     print("Viewport:", viewport)
-#     # coordenadas do volume de visualização
-#     xr = context.global_vars.right
-#     xl = context.global_vars.left
-#     yt = context.global_vars.top
-#     yb = context.global_vars.bottom
-#     zn = 1.0
-#     zf = -1.0
-    
-#     # matriz de projeçao (window + NDC)
-#     P =[
-#         [2/(xr-xl), 0.0, 0.0, -(xr+xl)/(xr-xl)],
-#         [0.0, 2/(yt-yb), 0.0, -(yt+yb)/(yt-yb)],
-#         [0.0, 0.0, -2/(zf-zn), -(zf+zn)/(zf-zn)],
-#         [0.0, 0.0, 0.0, 1.0],
-#     ]
-
-#     PM = np.array(P)
-
-#     # inversa da matriz de prozeção
-#     invP = np.linalg.inv(PM)
-
-#     # conversão das coordenadas do mouse para NDC
-#     viewport = glGetIntegerv(GL_VIEWPORT)
-#     ywin = viewport[3] - y
-#     xndc = (2*(x-viewport[0]))/viewport[2] -1
-#     yndc = (2*(ywin-viewport[1]))/viewport[3] -1
-#     zndc = 0
-#     wndc = 1
-#     vndc = np.array([xndc, yndc, zndc,wndc])
-    
-#     # transformação de projeção inversa
-#     world = np.matmul(invP, vndc)
-
-#     return world[0], world[1]
-
-# def getWorldCoords(context, x, y):
-#     from OpenGL.GL import glGetIntegerv, GL_VIEWPORT
-#     import numpy as np
-
-#     viewport = glGetIntegerv(GL_VIEWPORT)
-#     print(f"Viewport real: {viewport}, Global w/h: {context.global_vars.w}, {context.global_vars.h}")
-
-#     # Detecta escala HiDPI (Retina)
-#     scale_x = viewport[2] / context.global_vars.w
-#     scale_y = viewport[3] / context.global_vars.h
-
-#     # Corrige coordenadas Qt → OpenGL
-#     x *= scale_x
-#     y *= scale_y
-#     ywin = viewport[3] - y
-
-#     # Parâmetros do volume de visualização
-#     xr = context.global_vars.right
-#     xl = context.global_vars.left
-#     yt = context.global_vars.top
-#     yb = context.global_vars.bottom
-#     zn = 1.0
-#     zf = -1.0
-
-#     P = [
-#         [2 / (xr - xl), 0.0, 0.0, -(xr + xl) / (xr - xl)],
-#         [0.0, 2 / (yt - yb), 0.0, -(yt + yb) / (yt - yb)],
-#         [0.0, 0.0, -2 / (zf - zn), -(zf + zn) / (zf - zn)],
-#         [0.0, 0.0, 0.0, 1.0],
-#     ]
-
-#     invP = np.linalg.inv(np.array(P))
-
-#     # Conversão das coordenadas para NDC
-#     xndc = (2 * (x - viewport[0])) / viewport[2] - 1
-#     yndc = (2 * (ywin - viewport[1])) / viewport[3] - 1
-#     vndc = np.array([xndc, yndc, 0, 1])
-
-#     world = np.matmul(invP, vndc)
-
-#     return world[0], world[1]
-
 def getWorldCoords(context: "Context", x: int, y: int)-> tuple[float, float] :
     gv = context.global_vars
     xl, xr, yb, yt = gv.left, gv.right, gv.bottom, gv.top

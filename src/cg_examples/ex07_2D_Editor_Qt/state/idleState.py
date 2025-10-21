@@ -1,15 +1,9 @@
 from OpenGL.GL import (
-    GL_COLOR_BUFFER_BIT, 
-    GL_DEPTH_BUFFER_BIT, 
-    glClear, 
-    glLoadIdentity, 
-    glColor3f,
-    glGetIntegerv,
-    GL_VIEWPORT
+    GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, 
+    glClear, glLoadIdentity, glColor3f,
+    
 )
-# from OpenGL.GLUT import (
-#     glutSwapBuffers,
-# )
+
 from .abstractState import State
 from ..view.draw_utils import getWorldCoords
 from ..view.draw_utils import axis
@@ -22,9 +16,7 @@ class IdleState(State):
 
     def __init__(self, context) -> None:
         super().__init__(context)
-        #self.__context = context
-
-    
+        
     @property
     def context(self):
         return super().context
@@ -33,20 +25,11 @@ class IdleState(State):
     def context(self, newcontext):
         super().context = newcontext
 
-
-    # def mouse(self, button, state, x, y):
-    #     #glutPostRedisplay()
-    #     pass
-    
     def keyboard(self, key, x, y):
         if key.decode() == "i":
             self.context.currentState = self.context.initCircleState
         elif key.decode() == "p":
             self.context.currentState = self.context.initPolygonState
-
-    # def motion(self, x, y):
-    #     pass
-    
   
     def display(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # type: ignore
@@ -56,8 +39,6 @@ class IdleState(State):
         self.context.global_vars.modelo.draw()
         draw_selection_overlays(self.context)
  
-
-
     def mousePressEvent(self, event: QMouseEvent):
         print("IdleState: mouse pressed")
         xw, yw = getWorldCoords(self.context, event.x(), event.y())
@@ -86,6 +67,9 @@ class IdleState(State):
 
         self.context.canvas.update()
 
+    def display_overlay(self):
+        # Nada a desenhar em Idle
+        pass
 
     def mouseMoveEvent(self, event: QMouseEvent):
         pass

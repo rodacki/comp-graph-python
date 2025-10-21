@@ -32,12 +32,9 @@ class MainWindow(QWidget):
         # Barra de botões
         button_layout = QHBoxLayout()
 
-
-        
         self.btn_circle = QPushButton()
         self.btn_circle.setIcon(qta.icon("fa6.circle", color="gray"))
         self.btn_circle.setIconSize(QSize(32, 32))
-
 
         #self.btn_idle = QPushButton("Idle")
 
@@ -45,15 +42,12 @@ class MainWindow(QWidget):
         self.btn_init_poligono.setIcon(qta.icon("fa6s.draw-polygon", color="gray"))
         self.btn_init_poligono.setIconSize(QSize(32, 32))
 
-       
-
         # self.btn_end_poligono = QPushButton("End Pol")
         self.btn_exit = QPushButton()
         self.btn_exit.setIcon(qta.icon("fa6s.right-from-bracket", color="gray"))
         self.btn_exit.setIconSize(QSize(32, 32))
 
-
-         # Ligações de eventos
+        # Ligações de eventos
         #self.btn_idle.clicked.connect(self.on_idle)
         self.btn_circle.clicked.connect(self.on_start_circle)
         self.btn_init_poligono.clicked.connect(self.on_start_polygon)
@@ -82,7 +76,6 @@ class MainWindow(QWidget):
     def leaveEvent(self, event: QEvent) -> None:
         self.unsetCursor()  # volta ao cursor do sistema/janela
 
-    
     # ------------------------------------------------ #
     # Ações dos botões
     # ------------------------------------------------ #

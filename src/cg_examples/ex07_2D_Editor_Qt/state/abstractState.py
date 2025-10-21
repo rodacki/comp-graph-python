@@ -49,7 +49,6 @@ class State(ABC):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
 
-        #glOrtho(left, right, bottom, top, -1.0, 1.0)
         #Estabelece a janela de seleção (left, right, bottom, top)
         if (width <= height): 
             glOrtho(left, right, bottom, top*height/width, -1.0, 1.0)

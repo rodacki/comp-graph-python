@@ -13,7 +13,7 @@ from OpenGL.GL import (
     glViewport,
     GL_LINES,
 )
-from .draw_utils import axis
+from .draw_utils import axis, px_to_world
 from ..state.context import Context
 
 class GLCanvas(QGLWidget):
@@ -36,31 +36,45 @@ class GLCanvas(QGLWidget):
         glViewport(0, 0, pixel_w, pixel_h)
 
         gv = self.state_context.global_vars
-
         gv.w = pixel_w
         gv.h = pixel_h
 
         # --- cálculo do tamanho do handler em coordenadas do mundo ---
-        from ..view.draw_utils import px_to_world
         gv.handle_size_world = px_to_world(self.state_context, gv.handle_size_px ,"avg")
-        print(f"[resizeGL] Logical: ({w}, {h})  Physical: ({pixel_w}, {pixel_h})  ratio={ratio:.2f}")
+        #print(f"[resizeGL] Logical: ({w}, {h})  Physical: ({pixel_w}, {pixel_h})  ratio={ratio:.2f}")
 
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # type: ignore
         glLoadIdentity()
-        axis(self.state_context)
-        self.state_context.display()
-        #self.swapBuffers()
-        
-    # def draw_axes(self):
-    #     """Desenha os eixos X e Y"""
-    #     glColor3f(0.8, 0.8, 0.8)
-    #     glBegin(GL_LINES)
-    #     glVertex2f(-1, 0)
-    #     glVertex2f(1, 0)
-    #     glVertex2f(0, -1)
-    #     glVertex2f(0, 1)
-        # glEnd()
+
+        ctx = self.state_context
+        gv = ctx.global_vars
+        m = gv.modelo
+
+        # 1) Eixos
+        axis(ctx)
+
+        # 2) cena principal (objetos)
+        for p in m.poligonos:
+            p.draw(open_strip=False)
+        for c in m.circulos:
+            c.draw()
+
+        # 3) seleção (decorations) — na View
+        for p in m.poligonos:
+            from .selection_render import draw_polygon_selection
+            draw_polygon_selection(p, ctx)
+        for c in m.circulos:
+            from .selection_render import draw_circle_selection
+            draw_circle_selection(c, ctx)
+
+        # 4) overlay do estado (se existir)
+        current = ctx.currentState
+        if hasattr(current, "display_overlay"):
+            current.display_overlay()  # desenha “borrachinha”, etc.
+
+
+        #self.state_context.display()
 
     # Eventos do mouse — delegados para o contexto
     def mousePressEvent(self, event: QMouseEvent) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
