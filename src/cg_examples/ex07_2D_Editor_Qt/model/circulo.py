@@ -68,9 +68,10 @@
 #         mensagem = "Circulo - xc: {:.2f} yc: {:.2f} raio: {:.2f}".format(self.xc, self.yc, self.raio)
 #         return mensagem
 
-
+from __future__ import annotations
 from dataclasses import dataclass
 import math
+from typing import TYPE_CHECKING
 from OpenGL.GL import (
     GL_LINE_LOOP,
     glBegin,
@@ -85,6 +86,10 @@ from OpenGL.GL import (
     glLineWidth,
     GL_LINE_STIPPLE,
 )
+
+# NUNCA importe Context em runtime aqui!
+if TYPE_CHECKING:
+    from ..state.context import Context  # só para type hints, não roda em runtime
 
 @dataclass
 class Circulo:
@@ -129,9 +134,9 @@ class Circulo:
         glEnd()
         glPopAttrib()
 
-    def hit_test(self, context, xw: float, yw: float) -> bool:
+    def hit_test(self, context: "Context", xw: float, yw: float) -> bool:
         from ..view.draw_utils import px_to_world
-        tol_world = px_to_world(context)
+        tol_world = px_to_world(context, context.global_vars.selection_tolerance_px)
         d1 = abs(math.hypot(xw - self.xc, yw - self.yc) - self.raio)
         border = d1 <= tol_world
         inside = ((xw - self.xc)**2 + (yw - self.yc)**2) <=  self.raio**2

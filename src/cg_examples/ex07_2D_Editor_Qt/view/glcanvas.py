@@ -14,9 +14,10 @@ from OpenGL.GL import (
     GL_LINES,
 )
 from .draw_utils import axis
+from ..state.context import Context
 
 class GLCanvas(QGLWidget):
-    def __init__(self, state_context, parent=None):
+    def __init__(self, state_context: Context, parent=None):
         super().__init__(parent)
         self.state_context = state_context
         self.setMouseTracking(True)
@@ -26,11 +27,6 @@ class GLCanvas(QGLWidget):
         glClearColor(0.2, 0.3, 0.4, 1.0)
         init(self.state_context)  # ← importante
 
-    # def resizeGL(self, w, h):
-    #     glViewport(0, 0, w, h)
-    #     self.state_context.global_vars.w = w
-    #     self.state_context.global_vars.h = h
-
     def resizeGL(self, w, h):
         # Corrige para monitores HiDPI (Retina)
         ratio = self.devicePixelRatioF()
@@ -39,8 +35,14 @@ class GLCanvas(QGLWidget):
 
         glViewport(0, 0, pixel_w, pixel_h)
 
-        self.state_context.global_vars.w = pixel_w
-        self.state_context.global_vars.h = pixel_h
+        gv = self.state_context.global_vars
+
+        gv.w = pixel_w
+        gv.h = pixel_h
+
+        # --- cálculo do tamanho do handler em coordenadas do mundo ---
+        from ..view.draw_utils import px_to_world
+        gv.handle_size_world = px_to_world(self.state_context, gv.handle_size_px ,"avg")
         print(f"[resizeGL] Logical: ({w}, {h})  Physical: ({pixel_w}, {pixel_h})  ratio={ratio:.2f}")
 
     def paintGL(self):

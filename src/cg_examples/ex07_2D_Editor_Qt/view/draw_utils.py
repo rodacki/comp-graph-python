@@ -1,68 +1,79 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
-from OpenGL.GL import (
-    GL_PROJECTION,
-    GL_MODELVIEW,
-    GL_LINES,
-    GL_VIEWPORT,
-    glViewport,
-    glMatrixMode,
-    glLoadIdentity,
-    glOrtho,
-    glBegin,
-    glEnd,
-    glVertex2f,
-    glColor3f,
-    glGetIntegerv,
-    
-)
+if TYPE_CHECKING:
+    from ..state.context import Context 
 
 import numpy as np
+
+from OpenGL.GL import (
+    GL_PROJECTION, GL_MODELVIEW, GL_LINES, GL_VIEWPORT,
+    glViewport, glMatrixMode, glLoadIdentity, glOrtho,
+    glBegin, glEnd, glVertex2f, glColor3f, glGetIntegerv, 
+)
+
+
+
 
 
 # ----------------------------------------------------- #
 # Funcao axis: inicializacao do OpenGL                      #
 # ----------------------------------------------------- #
-def init(context):
-    right = context.global_vars.right
-    left = context.global_vars.left
-    bottom = context.global_vars.bottom
-    top = context.global_vars.top
+# def init(context: "Context"):
+#     right = context.global_vars.right
+#     left = context.global_vars.left
+#     bottom = context.global_vars.bottom
+#     top = context.global_vars.top
 
-    glViewport(0, 0, 500, 500)
+#     glViewport(0, 0, 500, 500)
+#     glMatrixMode(GL_PROJECTION)
+#     glLoadIdentity()
+#     glOrtho(left, right, bottom, top, -1.0, 1.0)
+#     glMatrixMode (GL_MODELVIEW)
+#     glLoadIdentity()
+
+
+# ----------------------------------------------------- #
+# Inicialização de projeção/matriz (sem mexer no viewport)
+# ----------------------------------------------------- #
+def init(context: "Context") -> None:
+    gv = context.global_vars
+    left, right, bottom, top = gv.left, gv.right, gv.bottom, gv.top
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
+    # Protege contra largura/altura zero
+    if right == left:
+        right = left + 1.0
+    if top == bottom:
+        top = bottom + 1.0
     glOrtho(left, right, bottom, top, -1.0, 1.0)
-    glMatrixMode (GL_MODELVIEW)
+    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
+
 
 # ----------------------------------------------------- #
 # Funcao axis: desenha eixos x e y                      #
 # ----------------------------------------------------- #
-def axis(context):
-    #from globals.settings import left, right, top, bottom
-    left = context.global_vars.left
-    right = context.global_vars.right
-    top = context.global_vars.top
-    bottom = context.global_vars.bottom
+def axis(context: "Context"):
+    gv = context.global_vars
+    left, right, top, bottom = gv.left, gv.right, gv.top, gv.bottom
 
     larg = right - left
+    alt = top - bottom
+
     xc = (right + left)/2
+    yc = (top + bottom)/2
+
     x1 = (xc - larg/2) * 0.8
     x2 = (xc + larg/2) * 0.8
-    alt = top - bottom
-    yc = (top + bottom)/2
     y1 = (yc - alt/2) * 0.8
     y2 = (yc + alt/2) * 0.8
+
     glColor3f(1.0, 0.0, 0.0)
-    glBegin(GL_LINES)
-    glVertex2f(x1, yc)
-    glVertex2f(x2, yc)
-    glEnd()
+    glBegin(GL_LINES); glVertex2f(x1, yc); glVertex2f(x2, yc); glEnd()
+
     glColor3f(0.0, 1.0, 0.0)
-    glBegin(GL_LINES)
-    glVertex2f(xc, y1)
-    glVertex2f(xc, y2)
-    glEnd()
+    glBegin(GL_LINES); glVertex2f(xc, y1); glVertex2f(xc, y2); glEnd()
 
 # ----------------------------------------------------- #
 # Projecao inversa de coordenadas                       #
@@ -190,14 +201,12 @@ def axis(context):
 
 #     return world[0], world[1]
 
-def getWorldCoords(context, x, y):
-    xr = context.global_vars.right
-    xl = context.global_vars.left
-    yt = context.global_vars.top
-    yb = context.global_vars.bottom
+def getWorldCoords(context: "Context", x: int, y: int)-> tuple[float, float] :
+    gv = context.global_vars
+    xl, xr, yb, yt = gv.left, gv.right, gv.bottom, gv.top
     zn = 1.0
     zf = -1.0
-
+    # matriz de projeção
     P = [
         [2 / (xr - xl), 0.0, 0.0, -(xr + xl) / (xr - xl)],
         [0.0, 2 / (yt - yb), 0.0, -(yt + yb) / (yt - yb)],
@@ -219,25 +228,22 @@ def getWorldCoords(context, x, y):
     vndc = np.array([xndc, yndc, 0, 1])
     world = np.matmul(invP, vndc)
 
-    return world[0], world[1]
+    return float(world[0]), float(world[1])
 
-def px_to_world(context, axis: str = "avg") -> float:
+def px_to_world(context: "Context", px: float, axis: str = "avg") -> float:
     """
     Converte N pixels (Qt, lógicos) para unidades de mundo.
     axis: "x", "y" ou "avg" (média aritmética de x/y).
     """
-    left  = context.global_vars.left
-    right = context.global_vars.right
-    bottom= context.global_vars.bottom
-    top   = context.global_vars.top
-    px    = context.global_vars.selection_tolerance_px
-
+    gv = context.global_vars
+    left, right, bottom, top = gv.left, gv.right, gv.bottom, gv.top
+    
     _, _, vw, vh = glGetIntegerv(GL_VIEWPORT)   # em *pixels físicos*
     if vw == 0 or vh == 0:
         return 0.0
 
     # Fator Retina (mesmo usado em getWorldCoords)
-    ratio = context.global_vars.h / vh          # lógicos → físicos
+    ratio = gv.h / vh          # lógicos → físicos
 
     sx = (right - left) / vw    # mundo por pixel físico (eixo X)
     sy = (top - bottom) / vh    # mundo por pixel físico (eixo Y)

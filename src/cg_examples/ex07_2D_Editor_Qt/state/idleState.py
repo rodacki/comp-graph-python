@@ -15,6 +15,7 @@ from ..view.draw_utils import getWorldCoords
 from ..view.draw_utils import axis
 from PyQt5.QtGui import QMouseEvent, QKeyEvent
 from PyQt5.QtCore import Qt
+from ..view.selection_render import draw_selection_overlays
 
 
 class IdleState(State):
@@ -46,29 +47,15 @@ class IdleState(State):
     # def motion(self, x, y):
     #     pass
     
-        
-    # def passiveMotion(self, x, y):
-    #     pass
-
+  
     def display(self):
-        #from globals.settings import modelo
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # type: ignore
         glLoadIdentity()
-        
         axis(self.context)
         glColor3f(1.0, 0.0, 3.0)
-        #if gui_state.currentState == FiniteState.ADD_POINT:
-        #settings.poligono.drawOpen()
         self.context.global_vars.modelo.draw()
-        #modelo.draw()
-        #glutSwapBuffers()
-
-    # def mousePressEvent(self, event: QMouseEvent):
-    #     print("vvvvvvCanvas:", event.x(), event.y())
-    #     viewport = glGetIntegerv(GL_VIEWPORT)
-    #     print("Viewport:", viewport)
-    #     x, y = getWorldCoords(self.context, event.x(), event.y())
-    #     print("World : ", x, y)
+        draw_selection_overlays(self.context)
+ 
 
 
     def mousePressEvent(self, event: QMouseEvent):

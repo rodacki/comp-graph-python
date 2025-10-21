@@ -36,9 +36,10 @@
 #             glVertex2f(ponto.x, ponto.y)
 #         glEnd()
 
+from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
-from ..utils.floatcmp import Tol, ae, alt, ale, agt, age, within, ane
+from typing import List, Optional, Tuple, TYPE_CHECKING
+from ..utils.floatcmp import Tol, ae, ale, agt, age, ane
 from OpenGL.GL import (
     GL_LINE_LOOP,
     GL_LINE_STRIP,
@@ -53,11 +54,12 @@ from OpenGL.GL import (
     glLineStipple,
     glEnable,
     glPopAttrib,
-
 )
 
 # Importa sua classe Ponto, que deve ter atributos x e y (float)
 from .ponto import Ponto
+if TYPE_CHECKING:
+    from ..state.context import Context
 
 
 @dataclass
@@ -88,6 +90,8 @@ class Poligono:
         p1 = Ponto(min(xs), min(ys))
         p2 = Ponto(max(xs), max(ys))
         return p1, p2
+    
+
 
     def draw_b_box(self):
         p1, p2 = self.bounding_box()
@@ -128,9 +132,9 @@ class Poligono:
             glVertex2f(ponto.x, ponto.y)
         glEnd()
 
-    def hit_test(self, context, xw: float, yw: float) -> bool:
+    def hit_test(self, context: Context, xw: float, yw: float) -> bool:
         from ..view.draw_utils import px_to_world
-        tol_world = px_to_world(context)
+        tol_world = px_to_world(context, context.global_vars.selection_tolerance_px)
         #print("Tolerancia =", tol_world)
         tol = Tol.abs_only(tol_world) # criando objeto para comparacao de floats
         x_sel = xw
