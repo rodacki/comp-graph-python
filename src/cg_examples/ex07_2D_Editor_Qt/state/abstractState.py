@@ -1,61 +1,43 @@
+from __future__ import annotations
+from abc import ABC
+from typing import Optional
+from PyQt5.QtGui import QMouseEvent, QKeyEvent
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..state.context import Context  # só para type hints, não roda em runtime
 
-from OpenGL.GL import GL_PROJECTION, GL_MODELVIEW, glViewport, glLoadIdentity, glMatrixMode, glOrtho
-from abc import ABC, abstractmethod
-from PyQt5.QtGui import QMouseEvent
 
 # abstract state class
 class State(ABC):
-    def __init__(self, context) -> None:
-        super().__init__()
-        self.__context = context
+    """Base dos estados: expõe apenas ganchos de eventos Qt e ciclo de vida.
+    Todos são no-op por padrão; cada estado implementa só o que precisa.
+    """
+    def __init__(self, context: Context) -> None:
+        self._context = context
 
     @property
     def context(self):
-        return self.__context
+        return self._context
     
     @context.setter
-    def context(self, newcontext):
-        self.__context = newcontext
+    def context(self, newcontext: Context):
+        self._context = newcontext
 
-    @abstractmethod
-    def mousePressEvent(self, event: QMouseEvent):
+    # --- ciclo de vida do estado (opcionais) ---
+    def on_enter(self) -> None:
+        """Chamado quando o estado passa a ser o corrente."""
         pass
 
-    @abstractmethod
-    def mouseMoveEvent(self, event: QMouseEvent):
+    def on_exit(self) -> None:
+        """Chamado quando o estado deixa de ser o corrente."""
         pass
 
-    @abstractmethod
-    def keyboard(self, key: bytes, x: int, y: int):
-        pass
+    # --- eventos de mouse (Qt) ---
+    def mousePressEvent(self, event: QMouseEvent) -> None: pass
+    def mouseMoveEvent(self, event: QMouseEvent) -> None: pass
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None: pass
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None: pass
+    def keyPressEvent(self, event: QKeyEvent) -> None: pass
 
-    @abstractmethod
-    def display(self):
-        pass
-    
-    def reshape(self, width, height):
-        right = self.__context.global_vars.right
-        left = self.__context.global_vars.left
-        bottom = self.__context.global_vars.bottom
-        top = self.__context.global_vars.top
-        # Evita a divisao por zero
-        if (height == 0):
-            height = 1
-                           
-        # Especifica as dimensões da Viewport
-        glViewport(0, 0, width, height)
-
-        # Inicializa o sistema de coordenadas
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-
-        #Estabelece a janela de seleção (left, right, bottom, top)
-        if (width <= height): 
-            glOrtho(left, right, bottom, top*height/width, -1.0, 1.0)
-        else: 
-            glOrtho(left, right*width/height, bottom, top, -1.0, 1.0)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-
-
-    
+    # --- overlay opcional (ex.: “borrachinha” do círculo, segmento-guia do polígono) ---
+    def display_overlay(self) -> None: pass

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Tuple
 from OpenGL.GL import (
     GL_LINE_LOOP, GL_ENABLE_BIT, GL_LINE_STIPPLE,
     glBegin, glEnd, glVertex2f, glPushAttrib, glPopAttrib,
@@ -19,6 +19,16 @@ class Circulo:
     raio: float = 0.0
     segmentos: int = 48  # número de segmentos para aproximar o círculo
     selected: bool = False  # flag para objeto selecionado pelo usuário
+
+    def sample_polyline(self, n: int | None = None) -> List[Tuple[float, float]]:
+        """Retorna pontos (x,y) para desenhar o círculo como polilinha."""
+        n = n or self.segmentos
+        pts = []
+        for i in range(n):
+            a = 2 * math.pi * i / n
+            pts.append((self.xc + self.raio*math.cos(a),
+                        self.yc + self.raio*math.sin(a)))
+        return pts
 
     def draw(self):
         """Desenha o círculo completo."""
@@ -54,11 +64,8 @@ class Circulo:
         glEnd()
         glPopAttrib()
 
-    def hit_test(self, context: "Context", xw: float, yw: float) -> bool:
-        from ..view.draw_utils import px_to_world
-        tol_world = px_to_world(context, context.global_vars.selection_tolerance_px)
+    def hit_test(self, xw: float, yw: float, tol_world: float) -> bool:
         d1 = abs(math.hypot(xw - self.xc, yw - self.yc) - self.raio)
         border = d1 <= tol_world
         inside = ((xw - self.xc)**2 + (yw - self.yc)**2) <=  self.raio**2
-
         return border or inside

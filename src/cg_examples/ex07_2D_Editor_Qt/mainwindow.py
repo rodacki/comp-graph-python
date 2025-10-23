@@ -2,7 +2,7 @@
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton
 from PyQt5.QtCore import QTimer, QSize, Qt, QEvent
-from PyQt5.QtGui import QCursor, QPixmap
+from PyQt5.QtGui import QCursor
 from .view.glcanvas import GLCanvas
 from .state.context import Context
 from .globals.settings import GlobalDefinitions
@@ -19,8 +19,7 @@ class MainWindow(QWidget):
         # Variáveis globais e contexto de estados
         self.global_vars = GlobalDefinitions()
         self.state_context = Context(self.global_vars)
-        self.state_context.currentState = self.state_context.idleState
-
+        
         # Layout principal
         layout = QVBoxLayout()
 
@@ -68,24 +67,18 @@ class MainWindow(QWidget):
         self.timer.timeout.connect(self.canvas.update)
         self.timer.start(16)
 
-    # Ao entrar na área do canvas, mude o cursor
-    def enterEvent(self, event: QEvent) -> None:
-        self.setCursor(self._cross_cursor)
-
-    # Ao sair, restaure para o padrão
-    def leaveEvent(self, event: QEvent) -> None:
-        self.unsetCursor()  # volta ao cursor do sistema/janela
+    
 
     # ------------------------------------------------ #
     # Ações dos botões
     # ------------------------------------------------ #
 
     def on_start_circle(self):
-        self.state_context.currentState = self.state_context.initCircleState
+        self.state_context.currentState = self.state_context.drawCircleState
         print("🟢 Estado: Iniciar círculo")
 
     def on_start_polygon(self):
-        self.state_context.currentState = self.state_context.initPolygonState
+        self.state_context.currentState = self.state_context.drawPolygonState
         print("🟢 Estado: Iniciar poligono")
 
     def on_exit(self):

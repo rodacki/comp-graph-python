@@ -1,116 +1,90 @@
-from OpenGL.GLUT import (
-    glutDestroyWindow, 
-    glutLeaveMainLoop,
-)
+from __future__ import annotations
+from dataclasses import dataclass, field
+from typing import Optional
+
 from PyQt5.QtGui import QMouseEvent, QKeyEvent
+
 from ..globals.settings import GlobalDefinitions
+from .abstractState import State
 from .idleState import IdleState
-from .initCircleState import InitCircleState
-from .endCircleState import EndCircleState
-from .initPolygonState import InitPolygonState
-from .addPolygonPointState import AddPointPolygonState
-from typing import Type
-import os
+from .drawCircleState import DrawCircleState
+from .drawPolygonState import DrawPolygonState
 
 
 # ----------------------------------------------------- #
 #  Classe contexto do padrão de projetos State          #
 # ----------------------------------------------------- #
+@dataclass
 class Context:
-    def __init__(self, global_vars: GlobalDefinitions, canvas=None) -> None:
-        self.__idleState = IdleState(self)
-        self.__initCircleState = InitCircleState(self)
-       # self.__endCircleState = EndCircleState(self)
-        self.__initPolygonState = InitPolygonState(self)
-        self.__addPolygonPointState = AddPointPolygonState(self)
-        self.__global_vars = global_vars
-        self.__currentState = self.__idleState
-        self.canvas = canvas
+    """Gerencia o estado atual e as transições do editor 2D."""
+    global_vars: GlobalDefinitions
+    canvas: Optional[object] = None
 
-    @property
-    def currentState(self):
-        return self.__currentState
+    # estados (definidos no pós-init)
+    idleState: IdleState = field(init=False)
+    drawCircleState: DrawCircleState = field(init=False)
+    drawPolygonState: DrawPolygonState = field(init=False)
     
+    # Estado atual (privado, com property)
+    _current_state: State = field(init=False, repr=False)
+
+    def __post_init__(self):
+            """Inicializa os estados dependentes deste contexto."""
+            self.idleState = IdleState(self)
+            self.drawCircleState = DrawCircleState(self)
+            self.drawPolygonState = DrawPolygonState(self)
+            self._current_state = self.idleState  # estado inicial
+            self._current_state.on_enter()
+    
+    # ---------------------------
+    # Troca de estado com hooks
+    # ---------------------------
+    @property
+    def currentState(self) -> State:
+        return self._current_state
+
     @currentState.setter
-    def currentState(self, newState):
-        self.__currentState = newState
+    def currentState(self, new_state: State) -> None:
+        if new_state is self._current_state:
+            return
+        if self._current_state is not None:
+            self._current_state.on_exit()
+        self._current_state = new_state
+        if self._current_state is not None:
+            self._current_state.on_enter()
+        # redraw quando troca de estado
+        if self.canvas is not None:
+            self.canvas.update()
 
-    @property
-    def global_vars(self):
-        return self.__global_vars
 
-    @property
-    def idleState(self):
-        return self.__idleState
-    
-    @property
-    def initCircleState(self):
-        return self.__initCircleState
-    
-    # @property
-    # def endCircleState(self):
-    #     return self.__endCircleState
-    
-    @property
-    def initPolygonState(self):
-        return self.__initPolygonState
-    
-    @property
-    def addPolygonPointState(self):
-        return self.__addPolygonPointState
-    
-    
     # ---------------------------------------------------------------- #
     #    Acoes (callbacks) a serem implementadas em cada estado da app #
     # ---------------------------------------------------------------- #
-    # def mouse(self, button, state, x, y):
-    #     self.currentState.mouse(button, state, x, y)
+    # ---------------------------
+    # Delegação de eventos (Qt)
+    # ---------------------------
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self._current_state.mousePressEvent(event)
 
-    # def keyboard(self, key, x, y):
-    #     if key.decode() == chr(27): 
-    #         self.global_vars.should_exit = True
-    #         glutDestroyWindow(self.global_vars.wind)
-    #         print("Exit")
-    #         return
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        self._current_state.mouseMoveEvent(event)
 
-    #     self.currentState.keyboard(key,x,y)
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        self._current_state.mouseReleaseEvent(event)
 
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        self._current_state.mouseDoubleClickEvent(event)
 
-    def keyboard(self, key: bytes, x: int, y: int) -> None:
-        """Fecha com ESC."""
-        if key == b'\x1b':  # ESC
-            try:
-                glutLeaveMainLoop()  # Funciona no FreeGLUT
-            except Exception:
-                os._exit(0)  # Saída imediata se glutLeaveMainLoop não existir
-        self.currentState.keyboard(key,x,y)
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        self._current_state.keyPressEvent(event)
 
-    # def motion(self, x, y):
-    #     self.currentState.motion(x, y)
-    
-        
-    # def passiveMotion(self, x, y):
-    #     self.currentState.passiveMotion(x,y)
-
-    def display(self):
+    def display(self) -> None:
+        """Render centralizado no GLCanvas; nada a fazer aqui."""
         pass
 
-    # def display(self):
-    #     if self.global_vars.should_exit:
-    #         glutDestroyWindow(self.global_vars.wind)
-    #         print("Testando exit")
-    #         return
-    #     self.currentState.display()
-
-    def reshape(self, width, height):
-        self.currentState.reshape(width, height)
-
-    def mousePressEvent(self, event: QMouseEvent):
-        self.currentState.mousePressEvent(event)
-
-    def mouseMoveEvent(self, event: QMouseEvent):
-        self.currentState.mouseMoveEvent(event)
-
+    # ---------------------------
+    # Seleção de objetos
+    # ---------------------------
     def clear_selection(self):
         for obj in self.global_vars.selected:
             obj.selected = False
@@ -131,4 +105,10 @@ class Context:
             obj.selected = True
             self.global_vars.selected.append(obj)
 
-
+    def set_state(self, new_state):
+        if self.currentState is not None:
+            self.currentState.on_exit()
+        self.currentState = new_state
+        self.currentState.on_enter()
+        if self.canvas:
+            self.canvas.update()

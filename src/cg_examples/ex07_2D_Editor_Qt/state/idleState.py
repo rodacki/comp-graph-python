@@ -1,16 +1,18 @@
-from OpenGL.GL import (
-    GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, 
-    glClear, glLoadIdentity, glColor3f,
+# from OpenGL.GL import (
+#     GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, 
+#     glClear, glLoadIdentity, glColor3f,
     
-)
+# )
+
+
+
 
 from .abstractState import State
-from ..view.draw_utils import getWorldCoords
+from ..view.draw_utils import getWorldCoords, px_to_world
 from ..view.draw_utils import axis
 from PyQt5.QtGui import QMouseEvent, QKeyEvent
 from PyQt5.QtCore import Qt
 from ..view.selection_render import draw_selection_overlays
-
 
 class IdleState(State):
 
@@ -25,36 +27,23 @@ class IdleState(State):
     def context(self, newcontext):
         super().context = newcontext
 
-    def keyboard(self, key, x, y):
-        if key.decode() == "i":
-            self.context.currentState = self.context.initCircleState
-        elif key.decode() == "p":
-            self.context.currentState = self.context.initPolygonState
-  
-    def display(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # type: ignore
-        glLoadIdentity()
-        axis(self.context)
-        glColor3f(1.0, 0.0, 3.0)
-        self.context.global_vars.modelo.draw()
-        draw_selection_overlays(self.context)
- 
     def mousePressEvent(self, event: QMouseEvent):
         print("IdleState: mouse pressed")
         xw, yw = getWorldCoords(self.context, event.x(), event.y())
         add = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         print(add)
         hit_obj = None
+        tol_world = px_to_world(self.context, self.context.global_vars.selection_tolerance_px)
         # percorra “de trás pra frente”
         # círculos
         for c in reversed(self.context.global_vars.modelo.circulos):
-            if c.hit_test(self.context, xw, yw):
+            if c.hit_test(xw, yw, tol_world):
                 hit_obj = c
                 break
         # polígonos (se ainda não bateu)
         if hit_obj is None:
             for p in reversed(self.context.global_vars.modelo.poligonos):
-                if p.hit_test(self.context, xw, yw):
+                if p.hit_test(xw, yw, tol_world):
                     hit_obj = p
                     break
 
@@ -66,6 +55,9 @@ class IdleState(State):
             self.context.clear_selection()
 
         self.context.canvas.update()
+
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None: 
+        pass
 
     def display_overlay(self):
         # Nada a desenhar em Idle

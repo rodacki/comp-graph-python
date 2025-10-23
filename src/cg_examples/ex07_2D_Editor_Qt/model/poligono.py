@@ -74,9 +74,7 @@ class Poligono:
             glVertex2f(ponto.x, ponto.y)
         glEnd()
 
-    def hit_test(self, context: Context, xw: float, yw: float) -> bool:
-        from ..view.draw_utils import px_to_world
-        tol_world = px_to_world(context, context.global_vars.selection_tolerance_px)
+    def hit_test(self, xw: float, yw: float, tol_world: float) -> bool:
         tol = Tol.abs_only(tol_world) # criando objeto para comparacao de floats
         x_sel = xw
         y_sel = yw

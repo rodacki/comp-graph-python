@@ -1,5 +1,7 @@
+# pyright: reportIncompatibleMethodOverride=false
 from PyQt5.QtOpenGL import QGLWidget
-from PyQt5.QtGui import QMouseEvent, QKeyEvent
+from PyQt5.QtGui import QMouseEvent, QKeyEvent, QCursor
+from PyQt5.QtCore import QEvent, Qt
 from OpenGL.GL import (
     GL_COLOR_BUFFER_BIT,
     GL_DEPTH_BUFFER_BIT,
@@ -21,6 +23,8 @@ class GLCanvas(QGLWidget):
         super().__init__(parent)
         self.state_context = state_context
         self.setMouseTracking(True)
+        self._cross_cursor = QCursor(Qt.CursorShape.CrossCursor)
+
 
     def initializeGL(self):
         from ..view.draw_utils import init
@@ -73,9 +77,6 @@ class GLCanvas(QGLWidget):
         if hasattr(current, "display_overlay"):
             current.display_overlay()  # desenha “borrachinha”, etc.
 
-
-        #self.state_context.display()
-
     # Eventos do mouse — delegados para o contexto
     def mousePressEvent(self, event: QMouseEvent) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
         self.state_context.mousePressEvent(event)
@@ -86,13 +87,18 @@ class GLCanvas(QGLWidget):
         self.update()
 
     def keyPressEvent(self, event: QKeyEvent) -> None: # pyright: ignore[reportIncompatibleMethodOverride]
-        key = event.text().encode()
-        self.state_context.keyboard(key, 0, 0)
+        self.state_context.keyPressEvent(event)
         self.update()
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None: # pyright: ignore[reportIncompatibleMethodOverride]
         """Encaminha o duplo clique ao estado atual."""
-        print("GLCanvas recebeu duplo clique")  # para debug
-        if hasattr(self.state_context.currentState, "mouseDoubleClickEvent"):
-            self.state_context.currentState.mouseDoubleClickEvent(event)
+        self.state_context.mouseDoubleClickEvent(event)
         self.update()
+
+    # Ao entrar na área do canvas, mude o cursor
+    def enterEvent(self, event: QEvent) -> None:
+        self.setCursor(self._cross_cursor)
+
+    # Ao sair, restaure para o padrão
+    def leaveEvent(self, event: QEvent) -> None:
+        self.unsetCursor()  # volta ao cursor do sistema/janela
