@@ -26,6 +26,7 @@ class GLCanvas(QGLWidget):
         self.state_context = state_context
         self.setMouseTracking(True)
         self._cross_cursor = QCursor(Qt.CursorShape.CrossCursor)
+        self.setFocusPolicy(Qt.StrongFocus)  # <- importante
 
     def initializeGL(self):
         from ..view.draw_utils import init
@@ -97,7 +98,7 @@ class GLCanvas(QGLWidget):
         self.state_context.mouse_move_event(event)
         self.update()
 
-    def keyRressEvent(
+    def keyPressEvent(
         self, event: QKeyEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
         self.state_context.key_press_event(event)

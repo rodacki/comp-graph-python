@@ -37,8 +37,6 @@ class MainWindow(QWidget):
         self.btn_circle.setIcon(qta.icon("fa6.circle", color="gray"))
         self.btn_circle.setIconSize(QSize(32, 32))
 
-        # self.btn_idle = QPushButton("Idle")
-
         self.btn_init_poligono = QPushButton()
         self.btn_init_poligono.setIcon(qta.icon("fa6s.draw-polygon", color="gray"))
         self.btn_init_poligono.setIconSize(QSize(32, 32))
@@ -49,16 +47,12 @@ class MainWindow(QWidget):
         self.btn_exit.setIconSize(QSize(32, 32))
 
         # Ligações de eventos
-        # self.btn_idle.clicked.connect(self.on_idle)
         self.btn_circle.clicked.connect(self.on_start_circle)
         self.btn_init_poligono.clicked.connect(self.on_start_polygon)
-        # self.btn_end_poligono.clicked.connect(self.on_stop_polygon)
         self.btn_exit.clicked.connect(self.on_exit)
 
-        # button_layout.addWidget(self.btn_idle)
         button_layout.addWidget(self.btn_circle)
         button_layout.addWidget(self.btn_init_poligono)
-        # button_layout.addWidget(self.btn_end_poligono)
         button_layout.addWidget(self.btn_exit)
 
         layout.addLayout(button_layout)
@@ -79,6 +73,7 @@ class MainWindow(QWidget):
 
     def on_start_polygon(self):
         self.state_context.current_state = self.state_context.draw_polygon_state
+        self.canvas.setFocus()  # <- garante que o canvas receba teclas
         print("🟢 Estado: Iniciar poligono")
 
     def on_exit(self):

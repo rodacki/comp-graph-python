@@ -113,11 +113,3 @@ class Context:
             obj.selected = True
             self.global_vars.selected.append(obj)
             log.info("Marcado: %s", obj)
-
-    # def set_state(self, new_state):
-    #     if self.current_state is not None:
-    #         self.current_state.on_exit()
-    #     self.current_state = new_state
-    #     self.current_state.on_enter()
-    #     if self.canvas:
-    #         self.canvas.update()

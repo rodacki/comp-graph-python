@@ -81,6 +81,7 @@ class DrawPolygonState(State):
 
     def key_press_event(self, event: QKeyEvent) -> None:
         k = event.key()
+        log.info("KeyPressEvent, key: ", k)
         if k in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             self.finish_polygon()
         elif k == Qt.Key.Key_Escape:

@@ -35,43 +35,6 @@ class Poligono:
         p2 = Ponto(max(xs), max(ys))
         return p1, p2
 
-    # def draw_b_box(self):
-    #     p1, p2 = self.bounding_box()
-    #     glPushAttrib(GL_ENABLE_BIT)
-    #     glLineStipple(10, 0xAAAA)
-    #     glEnable(GL_LINE_STIPPLE)
-    #     glBegin(GL_LINE_LOOP)
-    #     glVertex2f(p1.x, p1.y)
-    #     glVertex2f(p2.x, p1.y)
-    #     glVertex2f(p2.x, p2.y)
-    #     glVertex2f(p1.x, p2.y)
-    #     glEnd()
-    #     glPopAttrib()
-
-    # def draw(self, open_strip: bool = False):
-    #     # estilo
-    #     if self.selected:
-    #         self.draw_b_box()
-    #         glColor3f(1.0, 0.6, 0.0)
-    #         glLineWidth(3.0)
-    #     else:
-    #         glColor3f(1.0, 1.0, 1.0)
-    #         glLineWidth(1.0)
-
-    #     mode = GL_LINE_STRIP if open_strip else GL_LINE_LOOP
-    #     glBegin(mode)
-    #     for p in self.pontos:
-    #         glVertex2f(p.x, p.y)
-    #     glEnd()
-    #     glLineWidth(1.0)
-
-    # def draw_open(self) -> None:
-    #     """Desenha o polígono parcialmente (ainda não fechado)."""
-    #     glBegin(GL_LINE_STRIP)
-    #     for ponto in self.pontos:
-    #         glVertex2f(ponto.x, ponto.y)
-    #     glEnd()
-
     def hit_test(self, xw: float, yw: float, tol_world: float) -> bool:
         tol = Tol.abs_only(tol_world)  # criando objeto para comparacao de floats
         x_sel = xw
