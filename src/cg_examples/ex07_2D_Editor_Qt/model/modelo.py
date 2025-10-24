@@ -1,4 +1,3 @@
-
 # from __future__ import annotations
 # from typing import List
 # from .poligono import Poligono
@@ -36,30 +35,32 @@
 
 # src/cg_examples/ex07_2D_Editor_Qt/model/modelo.py
 from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import List
-from .poligono import Poligono
+
 from .circulo import Circulo
+from .poligono import Poligono
+
 
 @dataclass
 class Modelo:
-    _poligonos: List[Poligono] = field(default_factory=list)
-    _circulos: List[Circulo] = field(default_factory=list)
+    _poligonos: list[Poligono] = field(default_factory=list)
+    _circulos: list[Circulo] = field(default_factory=list)
 
     # API pública (read-only)
     @property
-    def poligonos(self) -> List[Poligono]:
+    def poligonos(self) -> list[Poligono]:
         return self._poligonos
 
     @property
-    def circulos(self) -> List[Circulo]:
+    def circulos(self) -> list[Circulo]:
         return self._circulos
 
     # Mutadores explícitos
-    def addPoligono(self, p: Poligono) -> None:
+    def add_poligono(self, p: Poligono) -> None:
         self._poligonos.append(p)
 
-    def addCirculo(self, c: Circulo) -> None:
+    def add_circulo(self, c: Circulo) -> None:
         self._circulos.append(c)
 
     def draw(self):

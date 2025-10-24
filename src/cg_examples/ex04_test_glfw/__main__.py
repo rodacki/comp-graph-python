@@ -2,39 +2,39 @@ import glfw
 import numpy as np
 from OpenGL.GL import *
 
- # --- Dados de vértices (float32) ---
-vertices = np.array([
-    -0.5, -0.5, 0.0,  # v0
-     0.5, -0.5, 0.0,  # v1
-     0.0,  0.5, 0.0   # v2
-], dtype=np.float32)
+# --- Dados de vértices (float32) ---
+vertices = np.array(
+    [-0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0], dtype=np.float32  # v0  # v1  # v2
+)
 
 
 def framebuffer_size_callback(window, width, height):
     glViewport(0, 0, width, height)
 
+
 def processInput(window):
     if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS:
         glfw.set_window_should_close(window, True)
 
-def main(): 
+
+def main():
     glfw.init()
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
     window = glfw.create_window(800, 600, "LearnOpenGL", None, None)
-    if (window == None):
+    if window == None:
         print("Failed to create GLFW window")
         glfw.terminate()
-        return  
-    
+        return
+
     # Torna o contexto OpenGL atual
     glfw.make_context_current(window)
 
     glViewport(0, 0, 800, 600)
 
-    glfw.set_framebuffer_size_callback(window, framebuffer_size_callback) 
+    glfw.set_framebuffer_size_callback(window, framebuffer_size_callback)
 
     while not glfw.window_should_close(window):
         processInput(window)
@@ -48,6 +48,7 @@ def main():
     glfw.terminate()
 
     return
+
 
 """ def main():
     # Inicializa o GLFW

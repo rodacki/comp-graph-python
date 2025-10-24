@@ -1,10 +1,22 @@
 # cg_examples/ex07_2D_Editor_Qt/view/selection_render.py
 from OpenGL.GL import (
-    GL_LINE_LOOP, GL_QUADS, GL_ENABLE_BIT, GL_LINE_STIPPLE, 
-    glPopAttrib, glBegin, glEnd, glVertex2f, glColor3f, 
-    glLineWidth, glPushAttrib, glLineStipple, glEnable
+    GL_ENABLE_BIT,
+    GL_LINE_LOOP,
+    GL_LINE_STIPPLE,
+    GL_QUADS,
+    glBegin,
+    glColor3f,
+    glEnable,
+    glEnd,
+    glLineStipple,
+    glLineWidth,
+    glPopAttrib,
+    glPushAttrib,
+    glVertex2f,
 )
+
 from ..view.draw_utils import px_to_world  # caso precise fallback sem cache
+
 
 def _draw_handle_square(cx: float, cy: float, half: float) -> None:
     glBegin(GL_QUADS)
@@ -13,6 +25,7 @@ def _draw_handle_square(cx: float, cy: float, half: float) -> None:
     glVertex2f(cx + half, cy + half)
     glVertex2f(cx - half, cy + half)
     glEnd()
+
 
 def draw_bbox(xmin: float, ymin: float, xmax: float, ymax: float) -> None:
     glLineWidth(1.0)
@@ -26,6 +39,7 @@ def draw_bbox(xmin: float, ymin: float, xmax: float, ymax: float) -> None:
     glVertex2f(xmin, ymax)
     glEnd()
     glPopAttrib()
+
 
 def draw_polygon_selection(poly, ctx) -> None:
     """Desenha a caixa de seleção e os ‘handles’ do polígono se estiver selected."""
@@ -49,8 +63,9 @@ def draw_polygon_selection(poly, ctx) -> None:
 
     # “handles” nos 4 cantos
     corners = [(p1.x, p1.y), (p2.x, p1.y), (p2.x, p2.y), (p1.x, p2.y)]
-    for (x, y) in corners:
+    for x, y in corners:
         _draw_handle_square(x, y, half)
+
 
 def draw_circle_selection(circle, ctx) -> None:
     """Exemplo para círculos: desenhar alça no topo + bbox opcional."""

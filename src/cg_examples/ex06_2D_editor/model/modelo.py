@@ -1,6 +1,3 @@
-from .poligono import Poligono
-from .circulo import Circulo
-
 # ----------------------------------------------------- #
 # Classe Modelo: agrega todas as entidades gráficas     #
 # ----------------------------------------------------- #

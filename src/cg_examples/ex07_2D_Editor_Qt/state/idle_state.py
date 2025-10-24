@@ -1,35 +1,33 @@
 # from OpenGL.GL import (
-#     GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, 
+#     GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT,
 #     glClear, glLoadIdentity, glColor3f,
-    
+
 # )
 
 
-
-
-from .abstractState import State
-from ..view.draw_utils import getWorldCoords, px_to_world
-from ..view.draw_utils import axis
-from PyQt5.QtGui import QMouseEvent, QKeyEvent
 from PyQt5.QtCore import Qt
-from ..view.selection_render import draw_selection_overlays
+from PyQt5.QtGui import QMouseEvent
+
+from ..view.draw_utils import get_world_coords, px_to_world
+from .abstract_state import State
+
 
 class IdleState(State):
 
     def __init__(self, context) -> None:
         super().__init__(context)
-        
+
     @property
     def context(self):
         return super().context
-    
+
     @context.setter
     def context(self, newcontext):
         super().context = newcontext
 
-    def mousePressEvent(self, event: QMouseEvent):
+    def mouse_press_event(self, event: QMouseEvent):
         print("IdleState: mouse pressed")
-        xw, yw = getWorldCoords(self.context, event.x(), event.y())
+        xw, yw = get_world_coords(self.context, event.x(), event.y())
         add = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         print(add)
         hit_obj = None
@@ -56,12 +54,12 @@ class IdleState(State):
 
         self.context.canvas.update()
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None: 
+    def mouse_double_click_event(self, event: QMouseEvent) -> None:
         pass
 
     def display_overlay(self):
         # Nada a desenhar em Idle
         pass
 
-    def mouseMoveEvent(self, event: QMouseEvent):
+    def mouse_move_event(self, event: QMouseEvent):
         pass

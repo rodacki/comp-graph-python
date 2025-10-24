@@ -1,12 +1,14 @@
 # pyright: reportIncompatibleMethodOverride=false
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton
-from PyQt5.QtCore import QTimer, QSize, Qt, QEvent
-from PyQt5.QtGui import QCursor
-from .view.glcanvas import GLCanvas
-from .state.context import Context
-from .globals.settings import GlobalDefinitions
 import qtawesome as qta
+from PyQt5.QtCore import QSize, Qt, QTimer
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget
+
+from .globals.settings import GlobalDefinitions
+from .state.context import Context
+from .view.glcanvas import GLCanvas
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -19,7 +21,7 @@ class MainWindow(QWidget):
         # Variáveis globais e contexto de estados
         self.global_vars = GlobalDefinitions()
         self.state_context = Context(self.global_vars)
-        
+
         # Layout principal
         layout = QVBoxLayout()
 
@@ -35,7 +37,7 @@ class MainWindow(QWidget):
         self.btn_circle.setIcon(qta.icon("fa6.circle", color="gray"))
         self.btn_circle.setIconSize(QSize(32, 32))
 
-        #self.btn_idle = QPushButton("Idle")
+        # self.btn_idle = QPushButton("Idle")
 
         self.btn_init_poligono = QPushButton()
         self.btn_init_poligono.setIcon(qta.icon("fa6s.draw-polygon", color="gray"))
@@ -47,13 +49,13 @@ class MainWindow(QWidget):
         self.btn_exit.setIconSize(QSize(32, 32))
 
         # Ligações de eventos
-        #self.btn_idle.clicked.connect(self.on_idle)
+        # self.btn_idle.clicked.connect(self.on_idle)
         self.btn_circle.clicked.connect(self.on_start_circle)
         self.btn_init_poligono.clicked.connect(self.on_start_polygon)
         # self.btn_end_poligono.clicked.connect(self.on_stop_polygon)
         self.btn_exit.clicked.connect(self.on_exit)
 
-        #button_layout.addWidget(self.btn_idle)
+        # button_layout.addWidget(self.btn_idle)
         button_layout.addWidget(self.btn_circle)
         button_layout.addWidget(self.btn_init_poligono)
         # button_layout.addWidget(self.btn_end_poligono)
@@ -67,18 +69,16 @@ class MainWindow(QWidget):
         self.timer.timeout.connect(self.canvas.update)
         self.timer.start(16)
 
-    
-
     # ------------------------------------------------ #
     # Ações dos botões
     # ------------------------------------------------ #
 
     def on_start_circle(self):
-        self.state_context.currentState = self.state_context.drawCircleState
+        self.state_context.current_state = self.state_context.draw_circle_state
         print("🟢 Estado: Iniciar círculo")
 
     def on_start_polygon(self):
-        self.state_context.currentState = self.state_context.drawPolygonState
+        self.state_context.current_state = self.state_context.draw_polygon_state
         print("🟢 Estado: Iniciar poligono")
 
     def on_exit(self):

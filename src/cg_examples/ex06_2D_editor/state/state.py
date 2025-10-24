@@ -1,8 +1,8 @@
 # from OpenGL.GLUT import (
 #     GLUT_LEFT_BUTTON,
 #     GLUT_DOWN,
-#     glutPostRedisplay, 
-#     glutDestroyWindow, 
+#     glutPostRedisplay,
+#     glutDestroyWindow,
 # )
 # from abc import ABC, abstractmethod
 # #from ..globals.settings import settings
@@ -32,7 +32,7 @@
 #     @abstractmethod
 #     def motion(self, x, y):
 #         pass
-    
+
 #     @abstractmethod
 #     def passiveMotion(self, x, y):
 #         pass
@@ -51,7 +51,7 @@
 #     @property
 #     def currentState(self):
 #         return self.__currentState
-    
+
 #     @currentState.setter
 #     def currentState(self, newState):
 #         self.__currentState = newState
@@ -59,15 +59,15 @@
 #     @property
 #     def idleState(self):
 #         return self.__idleState
-    
+
 #     @property
 #     def initCircleState(self):
 #         return self.__initCircleState
-    
+
 #     @property
 #     def EndCircleState(self):
 #         return self.__endCircleState
-    
+
 #     def setCurrentState(self, state: Type[State]):
 #         self.__currentState = state
 
@@ -78,21 +78,19 @@
 #         self.currentState.mouse(button, state, x, y)
 
 #     def keyboard(self, key, x, y):
-#         if key.decode() == chr(27): 
+#         if key.decode() == chr(27):
 #             glutDestroyWindow(self.__window)
 #             print("Exit")
 
 #         self.currentState.keyboard(key,x,y)
-    
+
 
 #     def motion(self, x, y):
 #         self.currentState.motion(x, y)
-    
-        
+
+
 #     def passiveMotion(self, x, y):
 #         self.currentState.passiveMotion(x, y)
-
-
 
 
 # class IdleState(State):
@@ -104,7 +102,7 @@
 #     @property
 #     def context(self):
 #         return self.__context
-    
+
 #     @context.setter
 #     def context(self, newcontext):
 #         self.__context = newcontext
@@ -112,19 +110,18 @@
 
 #     def mouse(self, button, state, wx, wy):
 #         glutPostRedisplay()
-        
-    
+
+
 #     def keyboard(self, key, x, y):
 #         print("IdleState.keyboard()")
 #         if key.decode() == "i":
 #             self.context.currentState = self.context.initCircleState
 
 
-    
 #     def motion(self):
 #         pass
-    
-        
+
+
 #     def passiveMotion(self):
 #         pass
 
@@ -137,7 +134,7 @@
 #     @property
 #     def context(self):
 #         return self.__context
-    
+
 #     @context.setter
 #     def context(self, newcontext):
 #         self.context = newcontext
@@ -149,20 +146,20 @@
 #             #settings.circulo.xc = wx
 #             #settings.circulo.yc = wy
 #             self.context.currentState = self.context.EndCircleState
-        
-    
+
+
 #     def keyboard(self, key, x, y):
 #         print("InitCircleState.keyboard()")
 #         pass
 
-    
+
 #     def motion(self):
 #         pass
 
 
 #     def passiveMotion(self):
 #         pass
-    
+
 # class EndCircleState(State):
 
 #     def __init__(self, context: Type[Context]) -> None:
@@ -172,7 +169,7 @@
 #     @property
 #     def context(self):
 #         return self.__context
-    
+
 #     @context.setter
 #     def xc(self, newcontext):
 #         self.__context = newcontext
@@ -186,10 +183,9 @@
 #             self.context.currentState = self.context.idleState
 #         pass
 
-    
+
 #     def keyboard(self, key, x, y):
 #         print("EndCircleState.keyboard()")
-        
 
 
 #     def motion(self):

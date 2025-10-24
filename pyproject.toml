@@ -42,3 +42,55 @@ ex07-pyqt-opengl = "cg_examples.ex07_2D_Editor_Qt.__main__:main"
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
 
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.14.2"
+black = "^25.9.0"
+mypy = "^1.18.2"
+pre-commit = "^4.3.0"
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# Ignore tudo que não seja ex07 (reforço extra; opcional)
+extend-exclude = [
+  "src/cg_examples/ex01_hello_opengl",
+  "src/cg_examples/ex02_test_glut",
+  "src/cg_examples/ex03_opengl_tutorial1",
+  "src/cg_examples/ex04_test_glfw",
+  "src/cg_examples/ex05_ColorPicker",
+  "src/cg_examples/ex06_2D_editor",
+  "src/**/__pycache__"
+]
+
+[tool.ruff.lint]
+# Conjuntos de regras:
+# E/W = pycodestyle, F = pyflakes, I = isort, UP = pyupgrade,
+# B = bugbear, N = pep8-naming, C90 = mccabe (complexidade ciclômica)
+select = ["E","F","W","I","UP","B","N","C90"]
+ignore = ["E203","E501"]  # compatível com black
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["cg_examples"]
+combine-as-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+"src/cg_examples/ex03_opengl_tutorial1/__main__.py" = ["F403", "F405"]
+"src/cg_examples/ex02_test_glut/__main__.py" = ["N802", "N806"]
+"src/cg_examples/ex07_2D_Editor_Qt/view/glcanvas.py" = ["N802"]
+"src/cg_examples/ex07_2D_Editor_Qt/state/idle_state.py" = ["N802"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+no_implicit_optional = true
+check_untyped_defs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true

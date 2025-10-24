@@ -1,21 +1,45 @@
-import sys
 import os
+import sys
+
 import numpy as np
 from OpenGL.GL import (
-    glClearColor, glClear, GL_COLOR_BUFFER_BIT,
-    glMatrixMode, glLoadIdentity, glViewport,
-    glBegin, glEnd, glVertex2f, glColor3f, glGetIntegerv,
-    GL_PROJECTION, GL_MODELVIEW, GL_TRIANGLES, GL_VIEWPORT
+    GL_COLOR_BUFFER_BIT,
+    GL_MODELVIEW,
+    GL_PROJECTION,
+    GL_TRIANGLES,
+    GL_VIEWPORT,
+    glBegin,
+    glClear,
+    glClearColor,
+    glColor3f,
+    glEnd,
+    glGetIntegerv,
+    glLoadIdentity,
+    glMatrixMode,
+    glVertex2f,
+    glViewport,
 )
 from OpenGL.GLUT import (
-    glutInit, glutInitDisplayMode, glutInitWindowSize, glutInitWindowPosition,
-    glutCreateWindow, glutDisplayFunc, glutReshapeFunc, glutKeyboardFunc,
-    glutMainLoop, glutSwapBuffers,glutLeaveMainLoop, glutMouseFunc,
-    GLUT_DOUBLE, GLUT_RGBA, GLUT_DEPTH
+    GLUT_DEPTH,
+    GLUT_DOUBLE,
+    GLUT_RGBA,
+    glutCreateWindow,
+    glutDisplayFunc,
+    glutInit,
+    glutInitDisplayMode,
+    glutInitWindowPosition,
+    glutInitWindowSize,
+    glutKeyboardFunc,
+    glutLeaveMainLoop,
+    glutMainLoop,
+    glutMouseFunc,
+    glutReshapeFunc,
+    glutSwapBuffers,
 )
 
 # Janela e vista ortográfica básica (coordenadas em "unidades de mundo")
 LEFT, RIGHT, BOTTOM, TOP = -1.0, 1.0, -1.0, 1.0
+
 
 def init_gl(width: int, height: int) -> None:
     """Configura viewport e projeção ortográfica simples."""
@@ -30,6 +54,7 @@ def init_gl(width: int, height: int) -> None:
     # Cor de fundo
     glClearColor(0.10, 0.12, 0.16, 1.0)
 
+
 def display() -> None:
     """Callback de desenho: limpa a tela e renderiza um triângulo."""
     glClear(GL_COLOR_BUFFER_BIT)
@@ -37,17 +62,18 @@ def display() -> None:
 
     # Triângulo colorido em coordenadas NDC-like (-1..1)
     glBegin(GL_TRIANGLES)
-    glColor3f(1.0, 0.0, 0.0)   # vértice 1 - vermelho
+    glColor3f(1.0, 0.0, 0.0)  # vértice 1 - vermelho
     glVertex2f(-0.6, -0.5)
 
-    glColor3f(0.0, 1.0, 0.0)   # vértice 2 - verde
-    glVertex2f( 0.6, -0.5)
+    glColor3f(0.0, 1.0, 0.0)  # vértice 2 - verde
+    glVertex2f(0.6, -0.5)
 
-    glColor3f(0.0, 0.5, 1.0)   # vértice 3 - azul
-    glVertex2f( 0.0,  0.6)
+    glColor3f(0.0, 0.5, 1.0)  # vértice 3 - azul
+    glVertex2f(0.0, 0.6)
     glEnd()
 
     glutSwapBuffers()
+
 
 def reshape(width: int, height: int) -> None:
     """Callback de redimensionamento da janela."""
@@ -55,17 +81,20 @@ def reshape(width: int, height: int) -> None:
         height = 1
     init_gl(width, height)
 
+
 def mouse(button, state, x, y):
     xw, yw = getWorldCoords(x, y)
     print(x, y, xw, yw)
 
+
 def keyboard(key: bytes, x: int, y: int) -> None:
     """Fecha com ESC."""
-    if key == b'\x1b':  # ESC
+    if key == b"\x1b":  # ESC
         try:
             glutLeaveMainLoop()  # Funciona no FreeGLUT
         except Exception:
             os._exit(0)  # Saída imediata se glutLeaveMainLoop não existir
+
 
 # ----------------------------------------------------- #
 # Projecao inversa de coordenadas                       #
@@ -107,12 +136,12 @@ def getWorldCoords(x, y):
     world_x, world_y = getWorldCoords(x, y)
     print(f"World coordinates: ({world_x:.2f}, {world_y:.2f})")
     ```
-           
-    # Reference: Karsten Lehn, Merijam Gotzes, Frank Klawonn. 
+
+    # Reference: Karsten Lehn, Merijam Gotzes, Frank Klawonn.
     # Introduction to Computer Graphics Using OpenGL and Java, 3. Ed.
     # Springer, ISBN 978-3-031-28134-1
     # págs. 171 e 416
-     """
+    """
     # coordenadas do volume de visualização
     xr = RIGHT
     xl = LEFT
@@ -120,12 +149,12 @@ def getWorldCoords(x, y):
     yb = BOTTOM
     zn = 1.0
     zf = -1.0
-    
+
     # matriz de projeçao (window + NDC)
-    P =[
-        [2/(xr-xl), 0.0, 0.0, -(xr+xl)/(xr-xl)],
-        [0.0, 2/(yt-yb), 0.0, -(yt+yb)/(yt-yb)],
-        [0.0, 0.0, -2/(zf-zn), -(zf+zn)/(zf-zn)],
+    P = [
+        [2 / (xr - xl), 0.0, 0.0, -(xr + xl) / (xr - xl)],
+        [0.0, 2 / (yt - yb), 0.0, -(yt + yb) / (yt - yb)],
+        [0.0, 0.0, -2 / (zf - zn), -(zf + zn) / (zf - zn)],
         [0.0, 0.0, 0.0, 1.0],
     ]
 
@@ -137,19 +166,17 @@ def getWorldCoords(x, y):
     # conversão das coordenadas do mouse para NDC
     viewport = glGetIntegerv(GL_VIEWPORT)
     ywin = viewport[3] - y
-    xndc = (2*(x-viewport[0]))/viewport[2] -1
-    yndc = (2*(ywin-viewport[1]))/viewport[3] -1
+    xndc = (2 * (x - viewport[0])) / viewport[2] - 1
+    yndc = (2 * (ywin - viewport[1])) / viewport[3] - 1
     zndc = 0
     wndc = 1
-    vndc = np.array([xndc, yndc, zndc,wndc])
+    vndc = np.array([xndc, yndc, zndc, wndc])
 
-    
     # transformação de projeção inversa
     world = np.matmul(invP, vndc)
 
-    #print("xd:{} yd:{} x:{:.2f} y:{:.2f}".format(x, ywin, world[0], world[1]))
+    # print("xd:{} yd:{} x:{:.2f} y:{:.2f}".format(x, ywin, world[0], world[1]))
     return world[0], world[1]
-
 
 
 def main() -> None:
@@ -171,6 +198,7 @@ def main() -> None:
 
     # Loop principal
     glutMainLoop()
+
 
 if __name__ == "__main__":
     main()

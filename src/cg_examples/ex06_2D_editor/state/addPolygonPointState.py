@@ -1,30 +1,26 @@
-from OpenGL.GL import ( 
-    GL_COLOR_BUFFER_BIT, 
+from OpenGL.GL import (
+    GL_COLOR_BUFFER_BIT,
     GL_DEPTH_BUFFER_BIT,
     GL_ENABLE_BIT,
     GL_LINE_STIPPLE,
     GL_LINES,
-    glColor3f, 
-    glLoadIdentity, 
-    glClear, 
-    glPushAttrib,
-    glLineStipple,
-    glEnable,
     glBegin,
-    glVertex2f,
+    glClear,
+    glColor3f,
+    glEnable,
     glEnd,
+    glLineStipple,
+    glLoadIdentity,
     glPopAttrib,
+    glPushAttrib,
+    glVertex2f,
 )
-from OpenGL.GLUT import (
-    glutSwapBuffers, 
-    GLUT_LEFT_BUTTON, 
-    GLUT_DOWN
-)
-from .abstractState import State
-from ..view.draw_utils import getWorldCoords
-from ..view.draw_utils import axis
-from ..model.poligono import Poligono
+from OpenGL.GLUT import GLUT_DOWN, GLUT_LEFT_BUTTON, glutSwapBuffers
+
 from ..model.ponto import Ponto
+from ..view.draw_utils import axis, getWorldCoords
+from .abstractState import State
+
 
 class AddPointPolygonState(State):
 
@@ -32,24 +28,23 @@ class AddPointPolygonState(State):
         super().__init__(context)
         self.__lastX = None
         self.__lastY = None
-   
+
     @property
     def context(self):
         return super().context
-    
+
     @context.setter
     def context(self, newcontext):
         super().context = newcontext
 
     def mouse(self, button, state, x, y):
-        
+
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
             wx, wy = getWorldCoords(self.context, x, y)
             print("Adicionando ponto")
             p = Ponto(wx, wy)
             self.context.global_vars.poligono.addPonto(p)
 
-            
     def keyboard(self, key, x, y):
         if key.decode() == "o":
             print("Terminando poligono")
@@ -58,10 +53,8 @@ class AddPointPolygonState(State):
             self.context.currentState = self.context.idleState
         pass
 
-    
     def motion(self, x, y):
         pass
-
 
     def passiveMotion(self, x, y):
         wx, wy = getWorldCoords(self.context, x, y)
@@ -70,9 +63,9 @@ class AddPointPolygonState(State):
         pass
 
     def display(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # type: ignore
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # type: ignore
         glLoadIdentity()
-        
+
         axis(self.context)
         glColor3f(1.0, 0.0, 3.0)
         self.context.global_vars.modelo.draw()
@@ -89,5 +82,5 @@ class AddPointPolygonState(State):
                 glVertex2f(self.__lastX, self.__lastY)
                 glEnd()
                 glPopAttrib()
-            
+
         glutSwapBuffers()

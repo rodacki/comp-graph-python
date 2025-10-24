@@ -1,14 +1,14 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import Optional
 
-from PyQt5.QtGui import QMouseEvent, QKeyEvent
+from dataclasses import dataclass, field
+
+from PyQt5.QtGui import QKeyEvent, QMouseEvent
 
 from ..globals.settings import GlobalDefinitions
-from .abstractState import State
-from .idleState import IdleState
-from .drawCircleState import DrawCircleState
-from .drawPolygonState import DrawPolygonState
+from .abstract_state import State
+from .draw_circle_state import DrawCircleState
+from .draw_polygon_state import DrawPolygonState
+from .idle_state import IdleState
 
 
 # ----------------------------------------------------- #
@@ -17,34 +17,35 @@ from .drawPolygonState import DrawPolygonState
 @dataclass
 class Context:
     """Gerencia o estado atual e as transições do editor 2D."""
+
     global_vars: GlobalDefinitions
-    canvas: Optional[object] = None
+    canvas: object | None = None
 
     # estados (definidos no pós-init)
-    idleState: IdleState = field(init=False)
-    drawCircleState: DrawCircleState = field(init=False)
-    drawPolygonState: DrawPolygonState = field(init=False)
-    
+    idle_state: IdleState = field(init=False)
+    draw_circle_state: DrawCircleState = field(init=False)
+    draw_polygon_state: DrawPolygonState = field(init=False)
+
     # Estado atual (privado, com property)
     _current_state: State = field(init=False, repr=False)
 
     def __post_init__(self):
-            """Inicializa os estados dependentes deste contexto."""
-            self.idleState = IdleState(self)
-            self.drawCircleState = DrawCircleState(self)
-            self.drawPolygonState = DrawPolygonState(self)
-            self._current_state = self.idleState  # estado inicial
-            self._current_state.on_enter()
-    
+        """Inicializa os estados dependentes deste contexto."""
+        self.idle_state = IdleState(self)
+        self.draw_circle_state = DrawCircleState(self)
+        self.draw_polygon_state = DrawPolygonState(self)
+        self._current_state = self.idle_state  # estado inicial
+        self._current_state.on_enter()
+
     # ---------------------------
     # Troca de estado com hooks
     # ---------------------------
     @property
-    def currentState(self) -> State:
+    def current_state(self) -> State:
         return self._current_state
 
-    @currentState.setter
-    def currentState(self, new_state: State) -> None:
+    @current_state.setter
+    def current_state(self, new_state: State) -> None:
         if new_state is self._current_state:
             return
         if self._current_state is not None:
@@ -56,27 +57,26 @@ class Context:
         if self.canvas is not None:
             self.canvas.update()
 
-
     # ---------------------------------------------------------------- #
     #    Acoes (callbacks) a serem implementadas em cada estado da app #
     # ---------------------------------------------------------------- #
     # ---------------------------
     # Delegação de eventos (Qt)
     # ---------------------------
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        self._current_state.mousePressEvent(event)
+    def mouse_press_event(self, event: QMouseEvent) -> None:
+        self._current_state.mouse_press_event(event)
 
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        self._current_state.mouseMoveEvent(event)
+    def mouse_move_event(self, event: QMouseEvent) -> None:
+        self._current_state.mouse_move_event(event)
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        self._current_state.mouseReleaseEvent(event)
+    def mouse_release_event(self, event: QMouseEvent) -> None:
+        self._current_state.mouse_release_event(event)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        self._current_state.mouseDoubleClickEvent(event)
+    def mouse_double_click_event(self, event: QMouseEvent) -> None:
+        self._current_state.mouse_double_click_event(event)
 
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        self._current_state.keyPressEvent(event)
+    def key_press_event(self, event: QKeyEvent) -> None:
+        self._current_state.key_press_event(event)
 
     def display(self) -> None:
         """Render centralizado no GLCanvas; nada a fazer aqui."""
@@ -106,9 +106,9 @@ class Context:
             self.global_vars.selected.append(obj)
 
     def set_state(self, new_state):
-        if self.currentState is not None:
-            self.currentState.on_exit()
-        self.currentState = new_state
-        self.currentState.on_enter()
+        if self.current_state is not None:
+            self.current_state.on_exit()
+        self.current_state = new_state
+        self.current_state.on_enter()
         if self.canvas:
             self.canvas.update()

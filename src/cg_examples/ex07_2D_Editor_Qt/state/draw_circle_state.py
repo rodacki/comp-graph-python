@@ -1,12 +1,13 @@
+from math import sqrt
+
 from OpenGL.GL import glColor3f
-from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt
-from .abstractState import State
-from ..view.draw_utils import getWorldCoords
-from ..view.draw_utils import axis
+from PyQt5.QtGui import QMouseEvent
+
 from ..model.circulo import Circulo
 from ..model.ponto import Ponto
-from math import sqrt
+from ..view.draw_utils import get_world_coords
+from .abstract_state import State
 
 
 class DrawCircleState(State):
@@ -17,16 +18,16 @@ class DrawCircleState(State):
     @property
     def context(self):
         return super().context
-    
+
     @context.setter
     def context(self, newcontext):
         super().context = newcontext
 
-    def mousePressEvent(self, event: QMouseEvent):
+    def mouse_press_event(self, event: QMouseEvent):
         if event.button() != Qt.MouseButton.LeftButton:
             return
 
-        x, y = getWorldCoords(self.context, event.x(), event.y())
+        x, y = get_world_coords(self.context, event.x(), event.y())
 
         if self.center is None:
             # 1º clique: define o centro e cria círculo temporário
@@ -41,17 +42,17 @@ class DrawCircleState(State):
             # limpa e volta pro Idle
             self.context.global_vars.circulo = None
             self.center = None
-            self.context.currentState = self.context.idleState
+            self.context.current_state = self.context.idleState
 
         self.context.canvas.update()
 
-    def mouseMoveEvent(self, event):
+    def mouse_move_event(self, event):
         """Atualiza o círculo temporário durante o movimento do mouse."""
         if self.center and self.context.global_vars.circulo:
             # x = event.x() - self.context.global_vars.w / 2
             # y = self.context.global_vars.h / 2 - event.y()
-            x, y = getWorldCoords(self.context, event.x(), event.y())
-            r = sqrt((x - self.center.x)**2 + (y - self.center.y)**2)
+            x, y = get_world_coords(self.context, event.x(), event.y())
+            r = sqrt((x - self.center.x) ** 2 + (y - self.center.y) ** 2)
             self.context.global_vars.circulo.raio = r
             # força redesenho
             self.context.canvas.update()
@@ -62,4 +63,3 @@ class DrawCircleState(State):
         if self.center and temp:
             glColor3f(0.0, 1.0, 0.0)  # verde para preview
             temp.drawOpen()
-

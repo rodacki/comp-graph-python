@@ -1,10 +1,10 @@
-from OpenGL.GL import *
-from OpenGL.GLUT import *
-from OpenGL.GLU import *
-import sys
-import numpy as np
 import math
+import sys
 
+import numpy as np
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
 
 # ----------------------------------------------------- #
 #  Global variables - window (WCS)                      #
@@ -15,11 +15,11 @@ bottom = -30.0
 top = 90.0
 
 
-    
 # tamanho da janela no sistema de interface
-w,h= 500,500
+w, h = 500, 500
 
-class Button():
+
+class Button:
     def __init__(self, xc=0, yc=0, alt=10, larg=10, raio=2) -> None:
         self._xc = xc
         self._yc = yc
@@ -28,47 +28,52 @@ class Button():
         self._raio = raio
 
     def draw(self):
-        glColor3ub(150,150,150)
+        glColor3ub(150, 150, 150)
         glBegin(GL_QUADS)
-        glVertex2d(self._xc - self._larg/2, self._yc - self._alt/2)
-        glVertex2d(self._xc + self._larg/2, self._yc - self._alt/2)
-        glVertex2d(self._xc + self._larg/2, self._yc + self._alt/2)
-        glVertex2d(self._xc - self._larg/2, self._yc + self._alt/2)
+        glVertex2d(self._xc - self._larg / 2, self._yc - self._alt / 2)
+        glVertex2d(self._xc + self._larg / 2, self._yc - self._alt / 2)
+        glVertex2d(self._xc + self._larg / 2, self._yc + self._alt / 2)
+        glVertex2d(self._xc - self._larg / 2, self._yc + self._alt / 2)
         glEnd()
         glLineWidth(2.0)
-        glColor3ub(94,93,91)
+        glColor3ub(94, 93, 91)
         glBegin(GL_LINE_LOOP)
-        glVertex2d(self._xc - self._larg/2, self._yc - self._alt/2)
-        glVertex2d(self._xc + self._larg/2, self._yc - self._alt/2)
-        glVertex2d(self._xc + self._larg/2, self._yc + self._alt/2)
-        glVertex2d(self._xc - self._larg/2, self._yc + self._alt/2)
+        glVertex2d(self._xc - self._larg / 2, self._yc - self._alt / 2)
+        glVertex2d(self._xc + self._larg / 2, self._yc - self._alt / 2)
+        glVertex2d(self._xc + self._larg / 2, self._yc + self._alt / 2)
+        glVertex2d(self._xc - self._larg / 2, self._yc + self._alt / 2)
         glEnd()
 
     def isInside(self, x, y):
-        return x>=self._xc-self._larg/2 and x<=self._xc+self._larg/2 and y>=self._yc-self._alt/2 and y<=self._yc+self._alt/2
+        return (
+            x >= self._xc - self._larg / 2
+            and x <= self._xc + self._larg / 2
+            and y >= self._yc - self._alt / 2
+            and y <= self._yc + self._alt / 2
+        )
 
     def draw2(self):
         glLineWidth(2.0)
-        glColor3ub(94,93,91)
+        glColor3ub(94, 93, 91)
         glBegin(GL_LINES)
         # base
-        glVertex2d(self._xc - self._larg/2 + self._raio, self._yc-self._alt/2)
-        glVertex2d(self._xc + self._larg/2 - self._raio, self._yc-self._alt/2)
+        glVertex2d(self._xc - self._larg / 2 + self._raio, self._yc - self._alt / 2)
+        glVertex2d(self._xc + self._larg / 2 - self._raio, self._yc - self._alt / 2)
         # dir
-        glVertex2d(self._xc+self._larg/2, self._yc - self._alt/2+self._raio)
-        glVertex2d(self._xc+self._larg/2, self._yc + self._alt/2-self._raio)
+        glVertex2d(self._xc + self._larg / 2, self._yc - self._alt / 2 + self._raio)
+        glVertex2d(self._xc + self._larg / 2, self._yc + self._alt / 2 - self._raio)
         # topo
-        glVertex2d(self._xc - self._larg/2 + self._raio, self._yc+self._alt/2)
-        glVertex2d(self._xc + self._larg/2 - self._raio, self._yc+self._alt/2)
-        #esq
-        glVertex2d(self._xc-self._larg/2, self._yc - self._alt/2+self._raio)
-        glVertex2d(self._xc-self._larg/2, self._yc + self._alt/2-self._raio)
+        glVertex2d(self._xc - self._larg / 2 + self._raio, self._yc + self._alt / 2)
+        glVertex2d(self._xc + self._larg / 2 - self._raio, self._yc + self._alt / 2)
+        # esq
+        glVertex2d(self._xc - self._larg / 2, self._yc - self._alt / 2 + self._raio)
+        glVertex2d(self._xc - self._larg / 2, self._yc + self._alt / 2 - self._raio)
         glEnd()
 
         # sup direito
         glBegin(GL_LINE_STRIP)
-        xo = self._xc + self._larg/2 - self._raio
-        yo = self._yc + self._alt/2 - self._raio
+        xo = self._xc + self._larg / 2 - self._raio
+        yo = self._yc + self._alt / 2 - self._raio
         for i in range(0, 105, 15):
             x = xo + self._raio * math.cos(math.radians(i))
             y = yo + self._raio * math.sin(math.radians(i))
@@ -77,8 +82,8 @@ class Button():
 
         # sup esquerdo
         glBegin(GL_LINE_STRIP)
-        xo = self._xc - self._larg/2 + self._raio
-        yo = self._yc + self._alt/2 - self._raio
+        xo = self._xc - self._larg / 2 + self._raio
+        yo = self._yc + self._alt / 2 - self._raio
         for i in range(90, 195, 15):
             x = xo + self._raio * math.cos(math.radians(i))
             y = yo + self._raio * math.sin(math.radians(i))
@@ -87,8 +92,8 @@ class Button():
 
         # inf esquerdo
         glBegin(GL_LINE_STRIP)
-        xo = self._xc - self._larg/2 + self._raio
-        yo = self._yc - self._alt/2 + self._raio
+        xo = self._xc - self._larg / 2 + self._raio
+        yo = self._yc - self._alt / 2 + self._raio
         for i in range(180, 285, 15):
             x = xo + self._raio * math.cos(math.radians(i))
             y = yo + self._raio * math.sin(math.radians(i))
@@ -97,18 +102,16 @@ class Button():
 
         # inf direito
         glBegin(GL_LINE_STRIP)
-        xo = self._xc + self._larg/2 - self._raio
-        yo = self._yc - self._alt/2 + self._raio
+        xo = self._xc + self._larg / 2 - self._raio
+        yo = self._yc - self._alt / 2 + self._raio
         for i in range(270, 375, 15):
             x = xo + self._raio * math.cos(math.radians(i))
             y = yo + self._raio * math.sin(math.radians(i))
             glVertex2d(x, y)
         glEnd()
-        
-    
 
 
-class Slider():
+class Slider:
     def __init__(self, xo, yo, larg, alt, r, g, b) -> None:
         self._xo = xo
         self._yo = yo
@@ -117,60 +120,63 @@ class Slider():
         self._r = r
         self._g = g
         self._b = b
-        self._selector = Selector(xo+larg/2, yo+alt/2, alt)
+        self._selector = Selector(xo + larg / 2, yo + alt / 2, alt)
 
     @property
     def selector(self):
         return self._selector
-    
-    @property 
+
+    @property
     def value(self):
-        return (self._selector.xc - self._xo)/self._larg
-    
+        return (self._selector.xc - self._xo) / self._larg
+
     @value.setter
     def value(self, novoValue):
         self._selector.xc = self._xo + novoValue * self._larg
 
-
     def draw(self):
         glBegin(GL_QUADS)
-        glColor3ub(0,0,0)
-        glVertex2d(self._xo, self._yo+self._alt)
+        glColor3ub(0, 0, 0)
+        glVertex2d(self._xo, self._yo + self._alt)
         glVertex2d(self._xo, self._yo)
-        glColor3ub(self._r,self._g, self._b)
-        glVertex2d(self._xo+self._larg, self._yo)
-        glVertex2d(self._xo+self._larg, self._yo+self._alt)
+        glColor3ub(self._r, self._g, self._b)
+        glVertex2d(self._xo + self._larg, self._yo)
+        glVertex2d(self._xo + self._larg, self._yo + self._alt)
         glEnd()
         glLineWidth(2.0)
         glBegin(GL_LINE_LOOP)
-        glColor3ub(94,93,91)
-        glVertex2d(self._xo, self._yo+self._alt)
+        glColor3ub(94, 93, 91)
+        glVertex2d(self._xo, self._yo + self._alt)
         glVertex2d(self._xo, self._yo)
-        glVertex2d(self._xo+self._larg, self._yo)
-        glVertex2d(self._xo+self._larg, self._yo+self._alt)
+        glVertex2d(self._xo + self._larg, self._yo)
+        glVertex2d(self._xo + self._larg, self._yo + self._alt)
         glEnd()
         self._selector.draw()
 
     def isInside(self, x, y):
-        return x>=self._xo and x<=self._xo+self._larg and y>=self._yo and y<=self._yo+self._alt
+        return (
+            x >= self._xo
+            and x <= self._xo + self._larg
+            and y >= self._yo
+            and y <= self._yo + self._alt
+        )
 
 
-class Selector():
-    def __init__(self, xc, yc, alt = 10) -> None:
+class Selector:
+    def __init__(self, xc, yc, alt=10) -> None:
         self._xc = xc
         self._yc = yc
         self._alt = alt
         self._selected = False
-    
+
     @property
     def isSelected(self):
         return self._selected
 
-
     @property
     def xc(self):
         return self._xc
-    
+
     @xc.setter
     def xc(self, novoxc):
         self._xc = novoxc
@@ -178,35 +184,40 @@ class Selector():
     @property
     def yc(self):
         return self._yc
-    
+
     @yc.setter
     def yc(self, novoyc):
         self._yc = novoyc
 
     def draw(self):
-        dy = self._alt/2.0
+        dy = self._alt / 2.0
         glPushAttrib(GL_COLOR_BUFFER_BIT)
         glLineWidth(2.0)
-        glColor3ub(255,255,255)
+        glColor3ub(255, 255, 255)
         glBegin(GL_LINES)
-        glVertex2f(self.xc, self.yc-dy)
-        glVertex2f(self.xc, self.yc+dy)
+        glVertex2f(self.xc, self.yc - dy)
+        glVertex2f(self.xc, self.yc + dy)
         glEnd()
         glBegin(GL_TRIANGLES)
-        glVertex2f(self.xc, self.yc+dy-0.2)
-        glVertex2f(self.xc-1, self.yc+dy+1.5)
-        glVertex2f(self.xc+1, self.yc+dy+1.5)
+        glVertex2f(self.xc, self.yc + dy - 0.2)
+        glVertex2f(self.xc - 1, self.yc + dy + 1.5)
+        glVertex2f(self.xc + 1, self.yc + dy + 1.5)
         glEnd()
         glBegin(GL_TRIANGLES)
-        glVertex2f(self.xc, self.yc-dy+0.2)
-        glVertex2f(self.xc-1, self.yc-dy-1.5)
-        glVertex2f(self.xc+1, self.yc-dy-1.5)
+        glVertex2f(self.xc, self.yc - dy + 0.2)
+        glVertex2f(self.xc - 1, self.yc - dy - 1.5)
+        glVertex2f(self.xc + 1, self.yc - dy - 1.5)
         glEnd()
         glPopAttrib()
 
     def isInside(self, x, y):
-        return x>=self._xc-2 and x<=self._xc+2 and y>=self._yc-self._alt/2-2 and y<=self._yc+self._alt/2+2
-    
+        return (
+            x >= self._xc - 2
+            and x <= self._xc + 2
+            and y >= self._yc - self._alt / 2 - 2
+            and y <= self._yc + self._alt / 2 + 2
+        )
+
     def select(self):
         self._selected = True
 
@@ -214,26 +225,25 @@ class Selector():
         self._selected = False
 
 
-
 # ----------------------------------------------------- #
 #  Desenho da cor resultante                            #
 # ----------------------------------------------------- #
 def resultColor():
     glPushAttrib(GL_COLOR_BUFFER_BIT)
-    glColor3ub(red,green,blue)
+    glColor3ub(red, green, blue)
     glBegin(GL_QUADS)
-    glVertex2d(20,0)
-    glVertex2d(40,0)
-    glVertex2d(40,15)
-    glVertex2d(20,15)
+    glVertex2d(20, 0)
+    glVertex2d(40, 0)
+    glVertex2d(40, 15)
+    glVertex2d(20, 15)
     glEnd()
     glLineWidth(2.0)
     glBegin(GL_LINE_LOOP)
-    glColor3ub(94,93,91)
-    glVertex2d(20,0)
-    glVertex2d(40,0)
-    glVertex2d(40,15)
-    glVertex2d(20,15)
+    glColor3ub(94, 93, 91)
+    glVertex2d(20, 0)
+    glVertex2d(40, 0)
+    glVertex2d(40, 15)
+    glVertex2d(20, 15)
     glEnd()
     glPopAttrib()
 
@@ -246,17 +256,18 @@ def init():
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     glOrtho(left, right, bottom, top, -1.0, 1.0)
-    glMatrixMode (GL_MODELVIEW)
+    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
+
 
 # ----------------------------------------------------- #
 # Callback de redesenho de tela                         #
 # ----------------------------------------------------- #
 def showScreen():
-    glClearColor(42/255, 40/255, 37/255, 1)
+    glClearColor(42 / 255, 40 / 255, 37 / 255, 1)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
-    
+
     resultColor()
     sliderR.draw()
     sliderG.draw()
@@ -267,49 +278,48 @@ def showScreen():
 
 # ----------------------------------------------------- #
 # Callback de eventos de teclado                        #
-# ----------------------------------------------------- #   
+# ----------------------------------------------------- #
 def onKeyboard(key, x, y):
     print(key, type(key))
     # tecla escape para encerrar a aplicação
-    if key.decode() == chr(27): 
+    if key.decode() == chr(27):
         glutDestroyWindow(wind)
         sys.exit(0)
 
-   
-    
+
 # ----------------------------------------------------- #
 # Callback de eventos click de mouse                    #
-# ----------------------------------------------------- #      
-def onMouseButton(button, state, x,y):
+# ----------------------------------------------------- #
+def onMouseButton(button, state, x, y):
     # conversão de coordenadas de tela para WCS
     global red
     global green
     global blue
-    xw, yw = getWorldCoords(x,y)
+    xw, yw = getWorldCoords(x, y)
     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
-        print("x: {:3d} y: {:3d} \twx: {:.2f} wy: {:.2f}".format(x, y, xw, yw))
+        print(f"x: {x:3d} y: {y:3d} \twx: {xw:.2f} wy: {yw:.2f}")
 
         if sliderR.isInside(xw, yw):
-            #sliderR.selector.xc = xw
-            #print("Dentro vermelhor!", sliderR.value)
-            #red = int(sliderR.value * 255)
-            if sliderR.selector.isInside(xw,yw):
+            # sliderR.selector.xc = xw
+            # print("Dentro vermelhor!", sliderR.value)
+            # red = int(sliderR.value * 255)
+            if sliderR.selector.isInside(xw, yw):
                 sliderR.selector.select()
                 print("Seletor R")
-    
+
         elif sliderG.isInside(xw, yw):
-           # print("Dentro verde!", sliderG.value)
-            #sliderG.selector.xc = xw
-            #green = int(sliderG.value * 255)
-            if sliderG.selector.isInside(xw,yw):
+            # print("Dentro verde!", sliderG.value)
+            # sliderG.selector.xc = xw
+            # green = int(sliderG.value * 255)
+            if sliderG.selector.isInside(xw, yw):
                 sliderG.selector.select()
                 print("Seletor G")
-    
+
         elif sliderB.isInside(xw, yw):
-            #print("Dentro azul!", sliderB.value)
-            #sliderB.selector.xc = xw
-            #blue = int(sliderB.value * 255)
-            if sliderB.selector.isInside(xw,yw):
+            # print("Dentro azul!", sliderB.value)
+            # sliderB.selector.xc = xw
+            # blue = int(sliderB.value * 255)
+            if sliderB.selector.isInside(xw, yw):
                 sliderB.selector.select()
                 print("Seletor B")
 
@@ -321,7 +331,7 @@ def onMouseButton(button, state, x,y):
             red = int(sliderR.value * 255)
             green = int(sliderG.value * 255)
             blue = int(sliderB.value * 255)
-        else: 
+        else:
             print("Fora!")
 
     if button == GLUT_LEFT_BUTTON and state == GLUT_UP:
@@ -330,19 +340,18 @@ def onMouseButton(button, state, x,y):
         sliderB.selector.unselect()
         print("unselect")
 
-    
-
     glutPostRedisplay()
-        
+
+
 # ----------------------------------------------------- #
 # Callback de movimento de mouse                        #
-# ----------------------------------------------------- #      
-def mouseMotion(x,y):
+# ----------------------------------------------------- #
+def mouseMotion(x, y):
     global red
     global green
     global blue
-    print(x,y)
-    wx, wy = getWorldCoords(x,y)
+    print(x, y)
+    wx, wy = getWorldCoords(x, y)
     if sliderR.selector.isSelected and sliderR.isInside(wx, wy):
         sliderR.selector.xc = wx
         red = int(sliderR.value * 255)
@@ -355,7 +364,6 @@ def mouseMotion(x,y):
         sliderB.selector.xc = wx
         blue = int(sliderB.value * 255)
         glutPostRedisplay()
-
 
 
 # ----------------------------------------------------- #
@@ -398,12 +406,12 @@ def getWorldCoords(x, y):
     world_x, world_y = getWorldCoords(x, y)
     print(f"World coordinates: ({world_x:.2f}, {world_y:.2f})")
     ```
-           
-    # Reference: Karsten Lehn, Merijam Gotzes, Frank Klawonn. 
+
+    # Reference: Karsten Lehn, Merijam Gotzes, Frank Klawonn.
     # Introduction to Computer Graphics Using OpenGL and Java, 3. Ed.
     # Springer, ISBN 978-3-031-28134-1
     # págs. 171 e 416
-     """
+    """
     # coordenadas do volume de visualização
     xr = right
     xl = left
@@ -411,12 +419,12 @@ def getWorldCoords(x, y):
     yb = bottom
     zn = 1.0
     zf = -1.0
-    
+
     # matriz de projeçao (window + NDC)
-    P =[
-        [2/(xr-xl), 0.0, 0.0, -(xr+xl)/(xr-xl)],
-        [0.0, 2/(yt-yb), 0.0, -(yt+yb)/(yt-yb)],
-        [0.0, 0.0, -2/(zf-zn), -(zf+zn)/(zf-zn)],
+    P = [
+        [2 / (xr - xl), 0.0, 0.0, -(xr + xl) / (xr - xl)],
+        [0.0, 2 / (yt - yb), 0.0, -(yt + yb) / (yt - yb)],
+        [0.0, 0.0, -2 / (zf - zn), -(zf + zn) / (zf - zn)],
         [0.0, 0.0, 0.0, 1.0],
     ]
 
@@ -428,18 +436,18 @@ def getWorldCoords(x, y):
     # conversão das coordenadas do mouse para NDC
     viewport = glGetIntegerv(GL_VIEWPORT)
     ywin = viewport[3] - y
-    xndc = (2*(x-viewport[0]))/viewport[2] -1
-    yndc = (2*(ywin-viewport[1]))/viewport[3] -1
+    xndc = (2 * (x - viewport[0])) / viewport[2] - 1
+    yndc = (2 * (ywin - viewport[1])) / viewport[3] - 1
     zndc = 0
     wndc = 1
-    vndc = np.array([xndc, yndc, zndc,wndc])
+    vndc = np.array([xndc, yndc, zndc, wndc])
 
-    
     # transformação de projeção inversa
     world = np.matmul(invP, vndc)
 
     # coordenadas no sistema WCS do OpenGL
     return world[0], world[1]
+
 
 # ----------------------------------------------------- #
 # Funcao principal do programa                          #
@@ -449,14 +457,14 @@ def main():
     global red
     global green
     global blue
-    global sliderR 
+    global sliderR
     global sliderG
     global sliderB
     global resetButton
-    
-    sliderR= Slider(0, 70, 100, 10, 255, 0, 0)
-    sliderG= Slider(0, 50, 100, 10, 0, 255, 0)
-    sliderB= Slider(0, 30, 100, 10, 0, 0, 255)
+
+    sliderR = Slider(0, 70, 100, 10, 255, 0, 0)
+    sliderG = Slider(0, 50, 100, 10, 0, 255, 0)
+    sliderB = Slider(0, 30, 100, 10, 0, 0, 255)
 
     red = int(sliderR.value * 255)
     green = int(sliderG.value * 255)
@@ -464,7 +472,6 @@ def main():
 
     resetButton = Button(70, 10, 10, 20, 2)
 
-   
     glutInit()
     glutInitWindowSize(500, 500)
     glutInitWindowPosition(0, 0)
@@ -476,7 +483,7 @@ def main():
     glutMotionFunc(mouseMotion)
     init()
     glutMainLoop()
-    
-    
+
+
 if __name__ == "__main__":
     main()

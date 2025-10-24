@@ -1,14 +1,16 @@
 # arquivo para definicao de variaveis globais do projeto
 from dataclasses import dataclass, field
-from typing import Any, List, Optional
+from typing import Any
+
 from ..model.modelo import Modelo
+
 
 # ----------------------------------------------------- #
 #  Global variables                                     #
 # ----------------------------------------------------- #
 @dataclass
-class GlobalDefinitions():
-    contents: List[Any] = field(default_factory=list)
+class GlobalDefinitions:
+    contents: list[Any] = field(default_factory=list)
     should_exit: bool = False
     left: float = -500.0
     right: float = 500.0
@@ -16,14 +18,14 @@ class GlobalDefinitions():
     top: float = 500.0
     w: int = 500
     h: int = 500
-    wind: Optional[Any] = None
-    poligono: Optional[Any] = None
-    circulo: Optional[Any] = None
+    wind: Any | None = None
+    poligono: Any | None = None
+    circulo: Any | None = None
     modelo: Modelo = field(default_factory=Modelo)
 
 
 # class GlobalDefinitions():
-    
+
 #     def __init__(self) -> None:
 #         self.__contents = [],
 #         self.__left = -500.0
@@ -37,96 +39,95 @@ class GlobalDefinitions():
 #         self.__circulo = None
 #         self.__modelo = Modelo()
 
-    # @property
-    # def contents(self):
-    #     return self.__contents
-    
-    # @property
-    # def left(self):
-    #     return self.__left
-    
-    # @left.setter
-    # def left(self, newleft):
-    #     self.__left = newleft
+# @property
+# def contents(self):
+#     return self.__contents
 
-    # @property
-    # def right(self):
-    #     return self.__right
-    
-    # @right.setter
-    # def right(self, newright):
-    #     self.__right = newright
+# @property
+# def left(self):
+#     return self.__left
 
-    # @property
-    # def top(self):
-    #     return self.__top
-    
-    # @top.setter
-    # def top(self, newtop):
-    #     self.__top = newtop
-    
-    # @property
-    # def bottom (self):
-    #     return self.__bottom 
+# @left.setter
+# def left(self, newleft):
+#     self.__left = newleft
 
-    # @bottom .setter
-    # def bottom(self, newbottom ):
-    #     self.__bottom  = newbottom 
+# @property
+# def right(self):
+#     return self.__right
 
-    # @property
-    # def w(self):
-    #     return self.__w
+# @right.setter
+# def right(self, newright):
+#     self.__right = newright
 
-    # @w.setter
-    # def w(self, neww):
-    #     self.__w = neww
-    
-    # @property
-    # def h(self):
-    #     return self.__h
+# @property
+# def top(self):
+#     return self.__top
 
-    # @h.setter
-    # def h(self, newh):
-    #     self.__h = newh
+# @top.setter
+# def top(self, newtop):
+#     self.__top = newtop
 
-    # @property
-    # def wind(self):
-    #     return self.__wind
+# @property
+# def bottom (self):
+#     return self.__bottom
 
-    # @wind.setter
-    # def wind(self, newwind):
-    #     self.__wind = newwind
+# @bottom .setter
+# def bottom(self, newbottom ):
+#     self.__bottom  = newbottom
 
-    # @property
-    # def poligono(self):
-    #     return self.__poligono
+# @property
+# def w(self):
+#     return self.__w
 
-    # @poligono.setter
-    # def poligono(self, newpoligono):
-    #     self.__poligono = newpoligono
+# @w.setter
+# def w(self, neww):
+#     self.__w = neww
 
-    # @property
-    # def circulo(self):
-    #     return self.__circulo
+# @property
+# def h(self):
+#     return self.__h
 
-    # @circulo.setter
-    # def circulo(self, newcirculo):
-    #     self.__circulo = newcirculo
+# @h.setter
+# def h(self, newh):
+#     self.__h = newh
 
-    # @property
-    # def modelo(self):
-    #     return self.__modelo
+# @property
+# def wind(self):
+#     return self.__wind
 
-    # @modelo.setter
-    # def modelo(self, newmodelo):
-    #     self.__modelo = newmodelo
+# @wind.setter
+# def wind(self, newwind):
+#     self.__wind = newwind
+
+# @property
+# def poligono(self):
+#     return self.__poligono
+
+# @poligono.setter
+# def poligono(self, newpoligono):
+#     self.__poligono = newpoligono
+
+# @property
+# def circulo(self):
+#     return self.__circulo
+
+# @circulo.setter
+# def circulo(self, newcirculo):
+#     self.__circulo = newcirculo
+
+# @property
+# def modelo(self):
+#     return self.__modelo
+
+# @modelo.setter
+# def modelo(self, newmodelo):
+#     self.__modelo = newmodelo
 
 
-    # s = "teste"
+# s = "teste"
 
-    # for i in range(len(s)):
-    #     print(s[i])
+# for i in range(len(s)):
+#     print(s[i])
 
-    # for elemento in s:
-    #     print(elemento)
-    
+# for elemento in s:
+#     print(elemento)

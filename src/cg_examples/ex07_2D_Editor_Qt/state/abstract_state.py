@@ -1,26 +1,23 @@
 from __future__ import annotations
-from abc import ABC
-from typing import Optional
-from PyQt5.QtGui import QMouseEvent, QKeyEvent
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from ..state.context import Context  # só para type hints, não roda em runtime
+
+from PyQt5.QtGui import QKeyEvent, QMouseEvent
 
 
-# abstract state class
-class State(ABC):
+# state class
+class State:
     """Base dos estados: expõe apenas ganchos de eventos Qt e ciclo de vida.
     Todos são no-op por padrão; cada estado implementa só o que precisa.
     """
-    def __init__(self, context: Context) -> None:
+
+    def __init__(self, context) -> None:
         self._context = context
 
     @property
     def context(self):
         return self._context
-    
+
     @context.setter
-    def context(self, newcontext: Context):
+    def context(self, newcontext):
         self._context = newcontext
 
     # --- ciclo de vida do estado (opcionais) ---
@@ -33,11 +30,21 @@ class State(ABC):
         pass
 
     # --- eventos de mouse (Qt) ---
-    def mousePressEvent(self, event: QMouseEvent) -> None: pass
-    def mouseMoveEvent(self, event: QMouseEvent) -> None: pass
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None: pass
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None: pass
-    def keyPressEvent(self, event: QKeyEvent) -> None: pass
+    def mouse_press_event(self, event: QMouseEvent) -> None:
+        pass
+
+    def mouse_move_event(self, event: QMouseEvent) -> None:
+        pass
+
+    def mouse_release_event(self, event: QMouseEvent) -> None:
+        pass
+
+    def mouse_double_click_event(self, event: QMouseEvent) -> None:
+        pass
+
+    def key_press_event(self, event: QKeyEvent) -> None:
+        pass
 
     # --- overlay opcional (ex.: “borrachinha” do círculo, segmento-guia do polígono) ---
-    def display_overlay(self) -> None: pass
+    def display_overlay(self) -> None:
+        pass

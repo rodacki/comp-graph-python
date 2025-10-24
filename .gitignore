@@ -58,3 +58,6 @@ poetry.toml
 # Diversos
 *.so
 *.dll
+
+corrigir.txt
+

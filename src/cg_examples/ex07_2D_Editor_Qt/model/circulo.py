@@ -1,33 +1,45 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 import math
-from typing import TYPE_CHECKING, List, Tuple
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
 from OpenGL.GL import (
-    GL_LINE_LOOP, GL_ENABLE_BIT, GL_LINE_STIPPLE,
-    glBegin, glEnd, glVertex2f, glPushAttrib, glPopAttrib,
-    glEnable, glLineStipple, glColor3f, glLineWidth,
+    GL_ENABLE_BIT,
+    GL_LINE_LOOP,
+    GL_LINE_STIPPLE,
+    glBegin,
+    glColor3f,
+    glEnable,
+    glEnd,
+    glLineStipple,
+    glLineWidth,
+    glPopAttrib,
+    glPushAttrib,
+    glVertex2f,
 )
 
 if TYPE_CHECKING:
-    from ..state.context import Context  # só para type hints, não roda em runtime
+    pass  # só para type hints, não roda em runtime
+
 
 @dataclass
 class Circulo:
     """Representa um círculo desenhado no plano 2D."""
+
     xc: float = 0.0
     yc: float = 0.0
     raio: float = 0.0
     segmentos: int = 48  # número de segmentos para aproximar o círculo
     selected: bool = False  # flag para objeto selecionado pelo usuário
 
-    def sample_polyline(self, n: int | None = None) -> List[Tuple[float, float]]:
+    def sample_polyline(self, n: int | None = None) -> list[tuple[float, float]]:
         """Retorna pontos (x,y) para desenhar o círculo como polilinha."""
         n = n or self.segmentos
         pts = []
         for i in range(n):
             a = 2 * math.pi * i / n
-            pts.append((self.xc + self.raio*math.cos(a),
-                        self.yc + self.raio*math.sin(a)))
+            pts.append((self.xc + self.raio * math.cos(a), self.yc + self.raio * math.sin(a)))
         return pts
 
     def draw(self):
@@ -40,7 +52,6 @@ class Circulo:
             glColor3f(1.0, 1.0, 1.0)
             glLineWidth(1.0)
 
-
         glBegin(GL_LINE_LOOP)
         for i in range(self.segmentos):
             angle = 2 * math.pi * i / self.segmentos
@@ -50,7 +61,7 @@ class Circulo:
         glEnd()
         glLineWidth(1.0)
 
-    def drawOpen(self):
+    def draw_open(self):
         """Desenha o círculo com linha tracejada (modo temporário)."""
         glPushAttrib(GL_ENABLE_BIT)
         glLineStipple(10, 0xAAAA)
@@ -67,5 +78,5 @@ class Circulo:
     def hit_test(self, xw: float, yw: float, tol_world: float) -> bool:
         d1 = abs(math.hypot(xw - self.xc, yw - self.yc) - self.raio)
         border = d1 <= tol_world
-        inside = ((xw - self.xc)**2 + (yw - self.yc)**2) <=  self.raio**2
+        inside = ((xw - self.xc) ** 2 + (yw - self.yc) ** 2) <= self.raio**2
         return border or inside

@@ -1,20 +1,14 @@
 from OpenGL.GL import *
-from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import sys
-import numpy as np
-from enum import Enum
-import math
-
-
+from OpenGL.GLUT import *
 
 left = -10.0
 right = 10.0
 bottom = -10.0
 top = 10.0
 
- 
-w,h= 500,500
+
+w, h = 500, 500
 
 
 def configure_visualization():
@@ -24,22 +18,24 @@ def configure_visualization():
     glLoadIdentity()
     # configura window (configura camera)
     glOrtho(left, right, bottom, top, -1.0, 1.0)
-    glMatrixMode (GL_MODELVIEW)
+    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
+
 def onReshape(w, h):
-    glViewport (0, 0, w, h)
-    glMatrixMode (GL_PROJECTION)
-    glLoadIdentity ()
+    glViewport(0, 0, w, h)
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
     glOrtho(left, right, bottom, top, -1.0, 1.0)
-    glMatrixMode (GL_MODELVIEW)
+    glMatrixMode(GL_MODELVIEW)
     return
+
 
 def showScreen():
     # limpa cor e profundidade
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-   
-    #glLoadIdentity()
+
+    # glLoadIdentity()
     configure_visualization()
     # configurando cor de desenho - vermelho
     glColor3f(1.0, 0.0, 0.0)
@@ -63,27 +59,23 @@ def showScreen():
     glVertex2f(-7.0, -7.0)
     glVertex2f(-2.0, -7.0)
     glEnd()
-   
+
     glutSwapBuffers()
-    
 
 
-
-def onKeyboard(key, x , y) -> None:
+def onKeyboard(key, x, y) -> None:
     """Fecha com ESC."""
     print(key, type(key))
-    if key == b'\x1b':  # ESC
+    if key == b"\x1b":  # ESC
         try:
             glutLeaveMainLoop()  # Funciona no FreeGLUT
         except Exception:
             os._exit(0)  # Saída imediata se glutLeaveMainLoop não existir
 
-    
-
 
 def main():
     global wind
-    
+
     # inicializa GLUT
     glutInit()
     print(chr(27))
@@ -96,16 +88,15 @@ def main():
     # registro da funcao callback de redenho
     glutDisplayFunc(showScreen)
     # redesenho em estado idle
-    #glutIdleFunc(showScreen)
+    # glutIdleFunc(showScreen)
     # registra eventos do teclado (por enquanto só ESC)
     glutKeyboardFunc(onKeyboard)
-
 
     glutReshapeFunc(onReshape)
 
     # dispara o loop de eventos
     glutMainLoop()
-    
-    
+
+
 if __name__ == "__main__":
     main()

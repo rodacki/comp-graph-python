@@ -1,6 +1,7 @@
-
-from OpenGL.GL import GL_PROJECTION, GL_MODELVIEW, glViewport, glLoadIdentity, glMatrixMode, glOrtho
 from abc import ABC, abstractmethod
+
+from OpenGL.GL import GL_MODELVIEW, GL_PROJECTION, glLoadIdentity, glMatrixMode, glOrtho, glViewport
+
 
 # abstract state class
 class State(ABC):
@@ -12,7 +13,7 @@ class State(ABC):
     @property
     def context(self):
         return self.__context
-    
+
     @context.setter
     def context(self, newcontext):
         self.__context = newcontext
@@ -28,7 +29,7 @@ class State(ABC):
     @abstractmethod
     def motion(self, x, y):
         pass
-    
+
     @abstractmethod
     def passiveMotion(self, x, y):
         pass
@@ -36,16 +37,16 @@ class State(ABC):
     @abstractmethod
     def display(self):
         pass
-    
+
     def reshape(self, width, height):
         right = self.__context.global_vars.right
         left = self.__context.global_vars.left
         bottom = self.__context.global_vars.bottom
         top = self.__context.global_vars.top
         # Evita a divisao por zero
-        if (height == 0):
+        if height == 0:
             height = 1
-                           
+
         # Especifica as dimensões da Viewport
         glViewport(0, 0, width, height)
 
@@ -53,14 +54,11 @@ class State(ABC):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
 
-        #glOrtho(left, right, bottom, top, -1.0, 1.0)
-        #Estabelece a janela de seleção (left, right, bottom, top)
-        if (width <= height): 
-            glOrtho(left, right, bottom, top*height/width, -1.0, 1.0)
-        else: 
-            glOrtho(left, right*width/height, bottom, top, -1.0, 1.0)
+        # glOrtho(left, right, bottom, top, -1.0, 1.0)
+        # Estabelece a janela de seleção (left, right, bottom, top)
+        if width <= height:
+            glOrtho(left, right, bottom, top * height / width, -1.0, 1.0)
+        else:
+            glOrtho(left, right * width / height, bottom, top, -1.0, 1.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-
-
-    

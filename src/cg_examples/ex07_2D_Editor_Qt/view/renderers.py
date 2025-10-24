@@ -1,12 +1,22 @@
 # view/renderers.py
-import math
 from OpenGL.GL import (
-    glBegin, glEnd, glVertex2f, glColor3f, glLineWidth,
-    GL_LINE_LOOP, GL_LINE_STRIP, GL_ENABLE_BIT, GL_LINE_STIPPLE,
-    glPushAttrib, glPopAttrib, glEnable, glLineStipple
+    GL_ENABLE_BIT,
+    GL_LINE_LOOP,
+    GL_LINE_STIPPLE,
+    GL_LINE_STRIP,
+    glBegin,
+    glColor3f,
+    glEnable,
+    glEnd,
+    glLineStipple,
+    glLineWidth,
+    glPopAttrib,
+    glPushAttrib,
+    glVertex2f,
 )
 
-def draw_circle(circle, dashed: bool=False, color=(1,1,1), width: float=1.0):
+
+def draw_circle(circle, dashed: bool = False, color=(1, 1, 1), width: float = 1.0):
     glColor3f(*color)
     glLineWidth(width)
     if dashed:
@@ -24,7 +34,7 @@ def draw_circle(circle, dashed: bool=False, color=(1,1,1), width: float=1.0):
     glLineWidth(1.0)
 
 
-def draw_polygon(poly, open_strip=False, color=(1,1,1), width: float=1.0):
+def draw_polygon(poly, open_strip=False, color=(1, 1, 1), width: float = 1.0):
     glColor3f(*color)
     glLineWidth(width)
     mode = GL_LINE_STRIP if open_strip else GL_LINE_LOOP

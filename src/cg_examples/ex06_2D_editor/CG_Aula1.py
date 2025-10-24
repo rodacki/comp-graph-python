@@ -1,7 +1,7 @@
 from OpenGL.GL import *
-from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import numpy as np
+from OpenGL.GLUT import *
+
 
 # inicializar camera/ambiente/modelo
 def init():
@@ -9,8 +9,9 @@ def init():
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     glOrtho(-10.0, 50.0, -10.0, 50.0, -1.0, 1.0)
-    glMatrixMode (GL_MODELVIEW)
+    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
+
 
 # ----------------------------------------------------- #
 # Callback de redesenho de tela                         #
@@ -18,17 +19,15 @@ def init():
 def showScreen():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
-    
 
-    #desenho do eixo x
+    # desenho do eixo x
     glColor3f(1.0, 0.0, 0.0)
     glBegin(GL_LINES)
     glVertex2f(-8.0, 0.0)
     glVertex2f(8.0, 0.0)
     glEnd()
 
-
-    #desenho do eixo x
+    # desenho do eixo x
     glColor3f(0.0, 1.0, 0.0)
     glBegin(GL_LINES)
     glVertex2f(0.0, -8.0)
@@ -44,6 +43,7 @@ def showScreen():
 
     glutSwapBuffers()
 
+
 # ----------------------------------------------------- #
 # Funcao principal do programa                          #
 # ----------------------------------------------------- #
@@ -56,6 +56,7 @@ def main():
     glutDisplayFunc(showScreen)
     init()
     glutMainLoop()
-    
+
+
 if __name__ == "__main__":
     main()

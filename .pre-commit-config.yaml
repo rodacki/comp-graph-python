@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        args:
+          - src/cg_examples/ex07_2D_Editor_Qt
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+          - src/cg_examples/ex07_2D_Editor_Qt

@@ -1,54 +1,58 @@
-from OpenGL.GL import *
-from OpenGL.GLUT import *
-from OpenGL.GLU import *
-from enum import Enum
-from state.context import Context
 from globals.settings import GlobalDefinitions
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+from state.context import Context
 from view.draw_utils import init
-
 
 # ----------------------------------------------------- #
 #  Global variables                                     #
 # ----------------------------------------------------- #
 globalVars = GlobalDefinitions()
-stateContext =  Context(globalVars)
+stateContext = Context(globalVars)
+
 
 # ----------------------------------------------------- #
 # Callback de redesenho de tela                         #
 # ----------------------------------------------------- #
 def showScreen():
     stateContext.display()
-   
+
+
 # ----------------------------------------------------- #
 # Callback de alteracao do tamanho da janela            #
 # ----------------------------------------------------- #
 def reshape(width, height):
     stateContext.reshape(width, height)
 
+
 # ----------------------------------------------------- #
 # Callback de eventos de teclado                        #
-# ----------------------------------------------------- #   
+# ----------------------------------------------------- #
 def onKeyboard(key, x, y):
-    #print(key, type(key))
+    # print(key, type(key))
     stateContext.keyboard(key, x, y)
-    
+
+
 # ----------------------------------------------------- #
 # Callback de eventos click de mouse                    #
-# ----------------------------------------------------- #      
-def onMouseButton(button, state, x,y):
-    stateContext.mouse(button, state, x,y)
-       
+# ----------------------------------------------------- #
+def onMouseButton(button, state, x, y):
+    stateContext.mouse(button, state, x, y)
+
+
 # ----------------------------------------------------- #
 # Callback de movimento de mouse com botao              #
-# ----------------------------------------------------- #      
-def mouseMotion(x,y):
-    stateContext.motion(x,y)
+# ----------------------------------------------------- #
+def mouseMotion(x, y):
+    stateContext.motion(x, y)
+
 
 # ----------------------------------------------------- #
 # Callback de movimento de mouse sem botao              #
-# ----------------------------------------------------- #      
-def passiveMotion(x,y):
-    stateContext.passiveMotion(x,y)
+# ----------------------------------------------------- #
+def passiveMotion(x, y):
+    stateContext.passiveMotion(x, y)
 
 
 # ----------------------------------------------------- #
@@ -69,7 +73,7 @@ def main():
     glutPassiveMotionFunc(passiveMotion)
     init(stateContext)
     glutMainLoop()
-    
-    
+
+
 if __name__ == "__main__":
     main()
