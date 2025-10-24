@@ -1,10 +1,3 @@
-# from OpenGL.GL import (
-#     GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT,
-#     glClear, glLoadIdentity, glColor3f,
-
-# )
-
-
 import logging
 
 from PyQt5.QtCore import Qt
@@ -54,14 +47,3 @@ class IdleState(State):
             self.context.clear_selection()
 
         self.context.canvas.update()
-
-    def mouse_double_click_event(self, event: QMouseEvent) -> None:
-        log.debug("mouse_double_click_event")
-        pass
-
-    def display_overlay(self):
-        # Nada a desenhar em Idle
-        pass
-
-    def mouse_move_event(self, event: QMouseEvent):
-        pass

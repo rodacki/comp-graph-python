@@ -49,8 +49,6 @@ class DrawCircleState(State):
     def mouse_move_event(self, event):
         """Atualiza o círculo temporário durante o movimento do mouse."""
         if self.center and self.context.global_vars.circulo:
-            # x = event.x() - self.context.global_vars.w / 2
-            # y = self.context.global_vars.h / 2 - event.y()
             x, y = get_world_coords(self.context, event.x(), event.y())
             r = sqrt((x - self.center.x) ** 2 + (y - self.center.y) ** 2)
             self.context.global_vars.circulo.raio = r
@@ -62,6 +60,3 @@ class DrawCircleState(State):
         temp = self.context.global_vars.circulo
         if temp:
             draw_circle(temp, dashed=True, color=(0, 1, 0))
-        # if self.center and temp:
-        #     glColor3f(0.0, 1.0, 0.0)  # verde para preview
-        #     temp.draw_open()

@@ -4,25 +4,13 @@ from __future__ import annotations
 import logging
 from math import isfinite
 
-from OpenGL.GL import (
-    GL_ENABLE_BIT,
-    GL_LINE_STIPPLE,
-    GL_LINES,
-    glBegin,
-    glEnable,
-    glEnd,
-    glLineStipple,
-    glPopAttrib,
-    glPushAttrib,
-    glVertex2f,
-)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 
 from ..model.poligono import Poligono
 from ..model.ponto import Ponto
 from ..view.draw_utils import get_world_coords
-from ..view.renderers import draw_polygon
+from ..view.renderers import draw_polygon, draw_segment
 from .abstract_state import State
 
 log = logging.getLogger(__name__)
@@ -110,37 +98,6 @@ class DrawPolygonState(State):
 
         # 2️⃣ Desenha a “borrachinha” (último ponto → posição atual do mouse)
         if poly.last_point and self._mouse_world:
-            x0, y0 = poly.last_point.x, poly.last_point.y
-            x1, y1 = self._mouse_world.x, self._mouse_world.y
-
-            glPushAttrib(GL_ENABLE_BIT)
-            glLineStipple(10, 0xAAAA)
-            glEnable(GL_LINE_STIPPLE)
-
-            glBegin(GL_LINES)
-            glVertex2f(x0, y0)
-            glVertex2f(x1, y1)
-            glEnd()
-
-            glPopAttrib()
-
-        # # estilo do esboço
-        # glColor3f(0.0, 1.0, 0.0)
-        # glLineWidth(2.0)
-        # self._poly.drawOpen()
-        # glLineWidth(1.0)
-
-        # # “borrachinha” da última aresta até o mouse
-        # if self._poly.lastPoint and self._mouse_world:
-        #     x0, y0 = self._poly.lastPoint.x, self._poly.lastPoint.y
-        #     x1, y1 = self._mouse_world.x, self._mouse_world.y
-        #     glPushAttrib(GL_ENABLE_BIT)
-        #     glLineStipple(10, 0xAAAA)
-        #     glEnable(GL_LINE_STIPPLE)
-
-        #     glBegin(GL_LINES)
-        #     glVertex2f(x0, y0)
-        #     glVertex2f(x1, y1)
-        #     glEnd()
-
-        #     glPopAttrib()
+            p0 = poly.last_point
+            p1 = self._mouse_world
+            draw_segment(p0.x, p0.y, p1.x, p1.y, dashed=True, color=(0.0, 1.0, 0.0), width=1.0)
