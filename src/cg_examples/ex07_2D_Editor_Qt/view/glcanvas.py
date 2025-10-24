@@ -1,4 +1,6 @@
 # pyright: reportIncompatibleMethodOverride=false
+import logging
+
 from OpenGL.GL import (
     GL_COLOR_BUFFER_BIT,
     GL_DEPTH_BUFFER_BIT,
@@ -12,7 +14,10 @@ from PyQt5.QtGui import QCursor, QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLWidget
 
 from ..state.context import Context
+from ..view.renderers import draw_circle, draw_polygon
 from .draw_utils import axis, px_to_world
+
+log = logging.getLogger(__name__)
 
 
 class GLCanvas(QGLWidget):
@@ -57,9 +62,12 @@ class GLCanvas(QGLWidget):
 
         # 2) cena principal (objetos)
         for p in m.poligonos:
-            p.draw(open_strip=False)
+            # p.draw(open_strip=False)
+            # cor e espessura básicos; destaque fica no overlay de seleção
+            draw_polygon(p, open_strip=False, color=(1.0, 1.0, 1.0), width=1.0)
         for c in m.circulos:
-            c.draw()
+            draw_circle(c, dashed=False, color=(1.0, 1.0, 1.0), width=1.0)
+            # c.draw()
 
         # 3) seleção (decorations) — na View
         for p in m.poligonos:
@@ -77,35 +85,36 @@ class GLCanvas(QGLWidget):
             current.display_overlay()  # desenha “borrachinha”, etc.
 
     # Eventos do mouse — delegados para o contexto
-    def mouse_press_event(
+    def mousePressEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        self.state_context.mousePressEvent(event)
+        self.state_context.mouse_press_event(event)
         self.update()
 
-    def mouse_move_event(
+    def mouseMoveEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        self.state_context.mouseMoveEvent(event)
+        self.state_context.mouse_move_event(event)
         self.update()
 
-    def key_press_event(
+    def keyRressEvent(
         self, event: QKeyEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        self.state_context.keyPressEvent(event)
+        self.state_context.key_press_event(event)
         self.update()
 
-    def mouse_double_click_event(
+    def mouseDoubleClickEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+        log.info("mouseDoubleClick_event")
         """Encaminha o duplo clique ao estado atual."""
-        self.state_context.mouseDoubleClickEvent(event)
+        self.state_context.mouse_double_click_event(event)
         self.update()
 
     # Ao entrar na área do canvas, mude o cursor
-    def enter_event(self, event: QEvent) -> None:
+    def enterEvent(self, event: QEvent) -> None:
         self.setCursor(self._cross_cursor)
 
     # Ao sair, restaure para o padrão
-    def leave_event(self, event: QEvent) -> None:
+    def leaveEvent(self, event: QEvent) -> None:
         self.unsetCursor()  # volta ao cursor do sistema/janela

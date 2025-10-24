@@ -1,4 +1,6 @@
 # view/renderers.py
+
+
 from OpenGL.GL import (
     GL_ENABLE_BIT,
     GL_LINE_LOOP,
@@ -15,8 +17,11 @@ from OpenGL.GL import (
     glVertex2f,
 )
 
+from ..model.circulo import Circulo
+from ..model.poligono import Poligono
 
-def draw_circle(circle, dashed: bool = False, color=(1, 1, 1), width: float = 1.0):
+
+def draw_circle(circle: Circulo, dashed: bool = False, color=(1, 1, 1), width: float = 1.0):
     glColor3f(*color)
     glLineWidth(width)
     if dashed:
@@ -34,7 +39,7 @@ def draw_circle(circle, dashed: bool = False, color=(1, 1, 1), width: float = 1.
     glLineWidth(1.0)
 
 
-def draw_polygon(poly, open_strip=False, color=(1, 1, 1), width: float = 1.0):
+def draw_polygon(poly: Poligono, open_strip=False, color=(1, 1, 1), width: float = 1.0):
     glColor3f(*color)
     glLineWidth(width)
     mode = GL_LINE_STRIP if open_strip else GL_LINE_LOOP

@@ -1,12 +1,12 @@
 from math import sqrt
 
-from OpenGL.GL import glColor3f
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QMouseEvent
 
 from ..model.circulo import Circulo
 from ..model.ponto import Ponto
 from ..view.draw_utils import get_world_coords
+from ..view.renderers import draw_circle
 from .abstract_state import State
 
 
@@ -37,12 +37,12 @@ class DrawCircleState(State):
             # 2º clique: fixa o raio e comita no modelo
             r = sqrt((x - self.center.x) ** 2 + (y - self.center.y) ** 2)
             self.context.global_vars.circulo.raio = r
-            self.context.global_vars.modelo.addCirculo(self.context.global_vars.circulo)
+            self.context.global_vars.modelo.add_circulo(self.context.global_vars.circulo)
 
             # limpa e volta pro Idle
             self.context.global_vars.circulo = None
             self.center = None
-            self.context.current_state = self.context.idleState
+            self.context.current_state = self.context.idle_state
 
         self.context.canvas.update()
 
@@ -60,6 +60,8 @@ class DrawCircleState(State):
     # ---- somente overlay (preview) do estado ----
     def display_overlay(self):
         temp = self.context.global_vars.circulo
-        if self.center and temp:
-            glColor3f(0.0, 1.0, 0.0)  # verde para preview
-            temp.drawOpen()
+        if temp:
+            draw_circle(temp, dashed=True, color=(0, 1, 0))
+        # if self.center and temp:
+        #     glColor3f(0.0, 1.0, 0.0)  # verde para preview
+        #     temp.draw_open()

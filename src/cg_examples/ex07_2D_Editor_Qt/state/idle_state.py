@@ -5,11 +5,15 @@
 # )
 
 
+import logging
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QMouseEvent
 
 from ..view.draw_utils import get_world_coords, px_to_world
 from .abstract_state import State
+
+log = logging.getLogger(__name__)
 
 
 class IdleState(State):
@@ -26,10 +30,9 @@ class IdleState(State):
         super().context = newcontext
 
     def mouse_press_event(self, event: QMouseEvent):
-        print("IdleState: mouse pressed")
+        log.debug("mouse_press_event")
         xw, yw = get_world_coords(self.context, event.x(), event.y())
         add = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
-        print(add)
         hit_obj = None
         tol_world = px_to_world(self.context, self.context.global_vars.selection_tolerance_px)
         # percorra “de trás pra frente”
@@ -46,15 +49,14 @@ class IdleState(State):
                     break
 
         if hit_obj is not None:
-            print("Add to selection")
             self.context.select_object(hit_obj, additive=add)
         elif not add:
-            print("Clear selection")
             self.context.clear_selection()
 
         self.context.canvas.update()
 
     def mouse_double_click_event(self, event: QMouseEvent) -> None:
+        log.debug("mouse_double_click_event")
         pass
 
     def display_overlay(self):

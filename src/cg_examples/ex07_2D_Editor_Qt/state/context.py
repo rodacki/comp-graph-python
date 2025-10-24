@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
@@ -9,6 +10,8 @@ from .abstract_state import State
 from .draw_circle_state import DrawCircleState
 from .draw_polygon_state import DrawPolygonState
 from .idle_state import IdleState
+
+log = logging.getLogger(__name__)
 
 
 # ----------------------------------------------------- #
@@ -35,6 +38,7 @@ class Context:
         self.draw_circle_state = DrawCircleState(self)
         self.draw_polygon_state = DrawPolygonState(self)
         self._current_state = self.idle_state  # estado inicial
+        log.info("Context inicializado (estado=%s)", type(self.current_state).__name__)
         self._current_state.on_enter()
 
     # ---------------------------
@@ -86,6 +90,8 @@ class Context:
     # Seleção de objetos
     # ---------------------------
     def clear_selection(self):
+        if self.global_vars.selected:
+            log.debug("Clear selection: %d objeto(s)", len(self.global_vars.selected))
         for obj in self.global_vars.selected:
             obj.selected = False
         self.global_vars.selected.clear()
@@ -96,14 +102,17 @@ class Context:
         if obj not in self.global_vars.selected:
             obj.selected = True
             self.global_vars.selected.append(obj)
+            log.info("Selecionado: %s", obj)
 
     def toggle_object(self, obj):
         if obj in self.global_vars.selected:
             obj.selected = False
             self.global_vars.selected.remove(obj)
+            log.info("Desmarcado: %s", obj)
         else:
             obj.selected = True
             self.global_vars.selected.append(obj)
+            log.info("Marcado: %s", obj)
 
     def set_state(self, new_state):
         if self.current_state is not None:
