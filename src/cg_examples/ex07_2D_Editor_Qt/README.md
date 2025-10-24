@@ -1,15 +1,16 @@
-🧩 Ex07 – 2D Editor com PyQt5 e OpenGL
+# Ex07 – 2D Editor com PyQt5 e OpenGL
 
-📘 Descrição
+## Descrição
 
 O subprojeto ex07_2D_Editor_Qt é um editor gráfico 2D desenvolvido em Python, utilizando PyQt5 para a interface gráfica e PyOpenGL para renderização interativa. O sistema demonstra conceitos de arquitetura MVC (Model–View–Controller) e o padrão de projeto State, permitindo desenhar, selecionar e manipular formas geométricas básicas em um canvas OpenGL.
 
 Este projeto é parte do repositório comp-graph-python, que reúne exemplos de Computação Gráfica desenvolvidos para fins didáticos.
 
-⸻
+---
 
-🧱 Estrutura do Projeto
+## Estrutura do Projeto
 
+```
 ex07_2D_Editor_Qt/
 │
 ├── __main__.py              # Ponto de entrada da aplicação
@@ -39,66 +40,72 @@ ex07_2D_Editor_Qt/
 │
 └── utils/
     └── floatcmp.py          # Comparações de ponto flutuante tolerantes a erro numérico
+```
 
+---
 
-⸻
+## ⚙️ Execução
 
-⚙️ Execução
+### Pré-requisitos
+- Python ≥ 3.11
+- Poetry (para gerenciamento de dependências)
 
-Pré-requisitos
-	•	Python ≥ 3.11
-	•	Poetry (para gerenciamento de dependências)
+### Instalação
 
-Instalação
-
+```bash
 poetry install
+```
 
-Execução do editor
+### Execução do editor
 
+```bash
 poetry run python -m src.cg_examples.ex07_2D_Editor_Qt
+```
 
+---
 
-⸻
+## 🧠 Conceitos-Chave
 
-🧠 Conceitos-Chave
-
-🔸 MVC (Model–View–Controller)
+#### 🔸 MVC (Model–View–Controller)
 
 O sistema está organizado em três camadas principais:
-	•	Model — Representa os dados geométricos (pontos, círculos, polígonos).
-	•	View — Gerencia a renderização OpenGL e a interação visual.
-	•	Controller — Implementado indiretamente pelo padrão State, controlando o comportamento do editor conforme o modo ativo.
+- 	Model — Representa os dados geométricos (pontos, círculos, polígonos).
+- 	View — Gerencia a renderização OpenGL e a interação visual.
+- 	Controller — Implementado indiretamente pelo padrão State, controlando o comportamento do editor conforme o modo ativo.
 
-🔸 Padrão State
+### 🔸 Padrão State
 
 Cada modo de operação (idle, desenhar círculo, desenhar polígono) é encapsulado em uma classe de estado, que reage de maneira específica aos eventos do mouse e teclado. O objeto Context gerencia a transição entre estados e mantém o estado atual.
 
-⸻
+---
 
-🖱️ Funcionalidades Principais
-	•	Desenho interativo de polígonos e círculos.
-	•	Seleção e destaque visual de objetos.
-	•	Finalização de polígonos com duplo clique, botão direito ou Enter.
-	•	Cancelamento de ações com Esc.
-	•	Renderização com anti-aliasing e linhas pontilhadas para pré-visualização.
+## 🖱️ Funcionalidades Principais
+-	Desenho interativo de polígonos e círculos.
+-	Seleção e destaque visual de objetos.
+-	Finalização de polígonos com duplo clique, botão direito ou Enter.
+-	Cancelamento de ações com Esc.
+-	Renderização com anti-aliasing e linhas pontilhadas para pré-visualização.
 
-⸻
+---
 
-📜 Licença
+## 📜 Licença
 
 Este projeto é distribuído sob a licença MIT. Consulte o arquivo LICENSE no diretório raiz do repositório.
 
-⸻
+---
 
-👨‍💻 Autor
+## 👨‍💻 Autor
 
 Prof. Paulo Rodacki
 Instituto Federal Catarinense (IFC)
 Projeto: Computação Gráfica com Python
 
-⸻
+---
 
-🔍 Próximos Passos
-	•	Implementar transformações geométricas (translação, rotação, escala).
-	•	Adicionar ferramentas de manipulação interativa (arrastar, girar, redimensionar).
-	•	Introduzir sistema de camadas (layers) e suporte a gravação de cena.
+### 🔍 Próximos Passos
+- Implementar transformações geométricas (translação, rotação, escala).
+- Adicionar ferramentas de manipulação interativa (arrastar, girar, redimensionar).
+- Introduzir sistema de camadas (layers) e suporte a gravação de cena.
+
+
+
