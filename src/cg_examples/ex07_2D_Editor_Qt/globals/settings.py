@@ -1,8 +1,13 @@
 # arquivo para definicao de variaveis globais do projeto
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..model.modelo import Modelo
+
+if TYPE_CHECKING:
+    from ..model.ponto import Ponto
 
 
 # ----------------------------------------------------- #
@@ -11,7 +16,7 @@ from ..model.modelo import Modelo
 @dataclass
 class GlobalDefinitions:
     contents: list[Any] = field(default_factory=list)
-    selected: list[Any] = field(default_factory=list)  # objetos selecionados
+    selected: list[object] = field(default_factory=list)  # objetos selecionados
     should_exit: bool = False
     left: float = -500.0
     right: float = 500.0
@@ -26,3 +31,4 @@ class GlobalDefinitions:
     selection_tolerance_px: int = 3  # tolerância de *hit test* em px
     handle_size_px: int = 20  # lado do “quadradinho” em px
     handle_size_world: float | None = None  # cache: tamanho em coordenadas de mundo
+    pivot: Ponto | None = None

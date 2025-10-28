@@ -1,4 +1,9 @@
-# cg_examples/ex07_2D_Editor_Qt/view/selection_render.py
+from __future__ import annotations
+
+from collections.abc import Iterable
+from math import hypot
+from typing import TYPE_CHECKING
+
 from OpenGL.GL import (
     GL_ENABLE_BIT,
     GL_LINE_LOOP,
@@ -15,7 +20,13 @@ from OpenGL.GL import (
     glVertex2f,
 )
 
-from ..view.draw_utils import px_to_world  # caso precise fallback sem cache
+from ..model.circulo import Circulo
+from ..model.poligono import Poligono
+from ..model.ponto import Ponto
+from .draw_utils import px_to_world
+
+if TYPE_CHECKING:
+    from ..state.context import Context
 
 
 def _draw_handle_square(cx: float, cy: float, half: float) -> None:
@@ -94,3 +105,121 @@ def draw_selection_overlays(ctx) -> None:
         draw_polygon_selection(p, ctx)
     for c in getattr(m, "circulos", m._circulos):
         draw_circle_selection(c, ctx)
+
+
+def compute_selection_bbox(selected: Iterable[object]) -> tuple[float, float, float, float] | None:
+    """Retorna (xmin, ymin, xmax, ymax) da seleção atual.
+    Funciona para Poligono (pontos) e Circulo (centro±raio).
+    """
+    xs: list[float] = []
+    ys: list[float] = []
+    for obj in selected:
+        if isinstance(obj, Poligono):
+            for p in obj.pontos:
+                xs.append(p.x)
+                ys.append(p.y)
+        elif isinstance(obj, Circulo):
+            xs.extend([obj.xc - obj.raio, obj.xc + obj.raio])
+            ys.extend([obj.yc - obj.raio, obj.yc + obj.raio])
+
+    if not xs or not ys:
+        return None
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def compute_selection_center(selected: Iterable[object]) -> Ponto | None:
+    """Centro geométrico simples do bbox da seleção."""
+    bbox = compute_selection_bbox(selected)
+    if bbox is None:
+        return None
+    xmin, ymin, xmax, ymax = bbox
+    return Ponto((xmin + xmax) * 0.5, (ymin + ymax) * 0.5)
+
+
+def _handle_positions_for_bbox(
+    bbox: tuple[float, float, float, float]
+) -> dict[str, list[tuple[float, float]]]:
+    """Gera posições dos handles a partir do bbox."""
+    xmin, ymin, xmax, ymax = bbox
+    cx, cy = (xmin + xmax) * 0.5, (ymin + ymax) * 0.5
+    corners = [
+        (xmin, ymin),  # bottom-left
+        (xmax, ymin),  # bottom-right
+        (xmax, ymax),  # top-right
+        (xmin, ymax),  # top-left
+    ]
+    edges = [
+        (cx, ymin),  # bottom
+        (xmax, cy),  # right
+        (cx, ymax),  # top
+        (xmin, cy),  # left
+    ]
+    # anel de rotação (usaremos o centro; o teste é por distância ao retângulo)
+    rotate_ring_center = (cx, cy)
+    return {
+        "corners": corners,
+        "edges": edges,
+        "rotate_center": [rotate_ring_center],
+        "center": [(cx, cy)],
+    }
+
+
+def _near_point(xw: float, yw: float, px: float, py: float, tol_world: float) -> bool:
+    return hypot(xw - px, yw - py) <= tol_world
+
+
+def _near_ring(
+    xw: float, yw: float, bbox: tuple[float, float, float, float], tol_world: float
+) -> bool:
+    """Considera 'anel' de rotação como uma coroa ao redor do bbox."""
+    xmin, ymin, xmax, ymax = bbox
+    cx, cy = (xmin + xmax) * 0.5, (ymin + ymax) * 0.5
+    # raio como 60% da maior dimensão
+    rx = (xmax - xmin) * 0.5
+    ry = (ymax - ymin) * 0.5
+    r = max(rx, ry) * 1.15
+    d = hypot(xw - cx, yw - cy)
+    return abs(d - r) <= tol_world * 1.5  # tolerância levemente maior
+
+
+def hit_test_handles(context: Context, xw: float, yw: float) -> tuple[str, dict] | None:
+    """Prioridade: rotate_ring > corner > edge > pivot > interior.
+
+    Retornos possíveis:
+      ("rotate", {})
+      ("scale", {"kind": "corner", "index": i})
+      ("scale", {"kind": "edge", "index": i})
+      ("pivot", {})
+      None
+    """
+    selected = context.global_vars.selected
+    if not selected:
+        return None
+
+    bbox = compute_selection_bbox(selected)
+    if bbox is None:
+        return None
+
+    tol_world = px_to_world(context, context.global_vars.selection_tolerance_px)
+    handles = _handle_positions_for_bbox(bbox)
+
+    # 1) rotate ring
+    if _near_ring(xw, yw, bbox, tol_world):
+        return ("rotate", {})
+
+    # 2) corners (escala uniforme)
+    for i, (hx, hy) in enumerate(handles["corners"]):
+        if _near_point(xw, yw, hx, hy, tol_world):
+            return ("scale", {"kind": "corner", "index": i})
+
+    # 3) edges (escala eixo)
+    for i, (hx, hy) in enumerate(handles["edges"]):
+        if _near_point(xw, yw, hx, hy, tol_world):
+            return ("scale", {"kind": "edge", "index": i})
+
+    # 4) pivot (centro) — habilite se quiser mover o pivô no futuro
+    (cx, cy) = handles["center"][0]
+    if _near_point(xw, yw, cx, cy, tol_world * 0.9):
+        return ("pivot", {})
+
+    return None
