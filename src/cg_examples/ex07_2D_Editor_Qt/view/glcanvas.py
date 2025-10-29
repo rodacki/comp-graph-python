@@ -58,6 +58,13 @@ class GLCanvas(QGLWidget):
         gv = ctx.global_vars
         m = gv.modelo
 
+        if gv.selected:
+            log.debug("selected[0] id=%s", id(gv.selected[0]))
+        if m.circulos:
+            log.debug("modelo.circulos[0] id=%s", id(m.circulos[0]))
+        if m.poligonos:
+            log.debug("modelo.poligonos[0] id=%s", id(m.poligonos[0]))
+
         # 1) Eixos
         axis(ctx)
 
@@ -89,25 +96,35 @@ class GLCanvas(QGLWidget):
     def mousePressEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+        log.debug(
+            "GLCanvas.mousePressEvent: button=%s pos=(%d,%d)", event.button(), event.x(), event.y()
+        )
         self.state_context.mouse_press_event(event)
         self.update()
 
     def mouseMoveEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+        log.debug("GLCanvas.mouseMoveEvent: pos=(%d,%d)", event.x(), event.y())
         self.state_context.mouse_move_event(event)
         self.update()
 
     def keyPressEvent(
         self, event: QKeyEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+        log.debug("GLCanvas.keyPressEvent: key=%s", event.key())
         self.state_context.key_press_event(event)
         self.update()
 
     def mouseDoubleClickEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        log.info("mouseDoubleClick_event")
+        log.debug(
+            "GLCanvas.mouseDoubleClickEvent: button=%s pos=(%d,%d)",
+            event.button(),
+            event.x(),
+            event.y(),
+        )
         """Encaminha o duplo clique ao estado atual."""
         self.state_context.mouse_double_click_event(event)
         self.update()

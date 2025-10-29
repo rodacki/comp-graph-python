@@ -8,6 +8,7 @@ from PyQt5.QtGui import QMouseEvent
 from ..view.draw_utils import get_world_coords, px_to_world
 from ..view.selection_render import hit_test_handles
 from .abstract_state import State
+from .transform_mode import TransformMode
 from .transform_state import TransformState
 
 log = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class IdleState(State):
         h = hit_test_handles(self.context, xw, yw)
         # 1) tenta handles primeiro (rotate/scale/pivot)
         if h is not None:
-            mode, info = h[0], h[1]
+            mode, info = h
             self.context.current_state = TransformState(self.context, mode=mode, handle=info)
             # transfere o próprio evento para o novo estado (melhor UX)
             self.context.current_state.mouse_press_event(event)
@@ -65,7 +66,7 @@ class IdleState(State):
             if hit_obj not in self.context.global_vars.selected:
                 self.context.select_object(hit_obj, additive=add)
             # inicia translate
-            self.context.current_state = TransformState(self.context, mode="translate")
+            self.context.current_state = TransformState(self.context, mode=TransformMode.TRANSLATE)
             self.context.current_state.mouse_press_event(event)
         else:
             # clique “no vazio”: limpa seleção (a não ser que SHIFT)
