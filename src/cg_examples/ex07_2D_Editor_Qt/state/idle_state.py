@@ -58,6 +58,7 @@ class IdleState(State):
         self._rotate_points0: list[tuple[float, float]] = []
         self._rotate_handle_vec0: tuple[float, float] | None = None
         self._rotate_last_angle: float = 0.0
+        self._rotate_raw_angle: float = 0.0
         self._rotate_accum_angle: float = 0.0
 
     @property
@@ -185,7 +186,8 @@ class IdleState(State):
         xw, yw = get_world_coords(self.context, event.x(), event.y())
 
         if self._rotating:
-            self._update_rotation(xw, yw)
+            snapping = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
+            self._update_rotation(xw, yw, snap=snapping)
             self.context.canvas.update()
             return
 
@@ -296,6 +298,7 @@ class IdleState(State):
         self._rotate_points0 = []
         self._rotate_handle_vec0 = None
         self._rotate_last_angle = 0.0
+        self._rotate_raw_angle = 0.0
         self._rotate_accum_angle = 0.0
 
     def _handle_half_world(self) -> float:
@@ -421,6 +424,7 @@ class IdleState(State):
         self._rotate_points0 = [(p.x, p.y) for p in target.pontos]
         self._rotate_handle_vec0 = (hx - cx, hy - cy)
         self._rotate_last_angle = atan2(yw - cy, xw - cx)
+        self._rotate_raw_angle = 0.0
         self._rotate_accum_angle = 0.0
         return True
 
@@ -458,12 +462,24 @@ class IdleState(State):
                 point.x = px + factor * (x0 - px)
                 point.y = py + factor * (y0 - py)
 
-    def _update_rotation(self, xw: float, yw: float) -> None:
+    def _rotation_snap_step_radians(self) -> float:
+        """Retorna passo de snap angular em radianos.
+
+        Returns:
+            float: Passo positivo em radianos, ou `0.0` quando inválido.
+        """
+        deg = float(getattr(self.context.global_vars, "rotation_snap_degrees", 0.0))
+        if not isfinite(deg) or deg <= 0.0:
+            return 0.0
+        return deg * pi / 180.0
+
+    def _update_rotation(self, xw: float, yw: float, snap: bool = False) -> None:
         """Atualiza rotação contínua do polígono alvo acompanhando o mouse.
 
         Args:
             xw: Coordenada X atual do mouse em mundo.
             yw: Coordenada Y atual do mouse em mundo.
+            snap: Quando `True`, aplica snap angular no passo configurado.
 
         Returns:
             None: Atualiza os vértices do polígono por rotação acumulada.
@@ -485,11 +501,18 @@ class IdleState(State):
         if not isfinite(delta):
             return
 
-        self._rotate_accum_angle += delta
+        self._rotate_raw_angle += delta
         self._rotate_last_angle = current_angle
 
-        c = cos(self._rotate_accum_angle)
-        s = sin(self._rotate_accum_angle)
+        applied_angle = self._rotate_raw_angle
+        if snap:
+            step = self._rotation_snap_step_radians()
+            if step > 0.0:
+                applied_angle = round(applied_angle / step) * step
+        self._rotate_accum_angle = applied_angle
+
+        c = cos(applied_angle)
+        s = sin(applied_angle)
         for point, (x0, y0) in zip(target.pontos, self._rotate_points0, strict=False):
             dx = x0 - cx
             dy = y0 - cy

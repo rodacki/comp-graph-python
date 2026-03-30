@@ -37,6 +37,7 @@ class GlobalDefinitions:
         selection_tolerance_px: Tolerância de hit-test em pixels lógicos.
         handle_size_px: Tamanho visual das alças (handlers) em pixels lógicos.
         handle_size_world: Cache do tamanho das alças em coordenadas de mundo.
+        rotation_snap_degrees: Passo angular (em graus) para snap durante rotação.
     """
 
     contents: list[Any] = field(default_factory=list)
@@ -56,4 +57,5 @@ class GlobalDefinitions:
     selection_tolerance_px: int = 3  # tolerância de *hit test* em px
     handle_size_px: int = 20  # lado do “quadradinho” em px
     handle_size_world: float | None = None  # cache: tamanho em coordenadas de mundo
+    rotation_snap_degrees: float = 15.0
     pivot: Ponto | None = None
