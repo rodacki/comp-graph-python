@@ -1,3 +1,5 @@
+"""Entidade geométrica de polígono usada pelo editor 2D."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -29,6 +31,12 @@ class Poligono:
         self.pontos.append(ponto)
 
     def bounding_box(self) -> tuple[Ponto, Ponto]:
+        """Calcula caixa envolvente alinhada aos eixos do polígono.
+
+        Returns:
+            tuple[Ponto, Ponto]:
+                Par `(p_min, p_max)` com canto inferior esquerdo e superior direito.
+        """
         xs = [p.x for p in self.pontos]
         ys = [p.y for p in self.pontos]
         p1 = Ponto(min(xs), min(ys))
@@ -36,6 +44,20 @@ class Poligono:
         return p1, p2
 
     def hit_test(self, xw: float, yw: float, tol_world: float) -> bool:
+        """Executa hit-test do ponto em relação ao polígono.
+
+        Args:
+            xw: Coordenada X do ponto de consulta em mundo.
+            yw: Coordenada Y do ponto de consulta em mundo.
+            tol_world: Tolerância em unidades de mundo para comparar bordas.
+
+        Returns:
+            bool: `True` quando o ponto está na borda (com tolerância)
+            ou no interior do polígono.
+
+        Notes:
+            O interior é testado por regra de paridade (ray casting).
+        """
         tol = Tol.abs_only(tol_world)  # criando objeto para comparacao de floats
         x_sel = xw
         y_sel = yw
@@ -64,3 +86,9 @@ class Poligono:
                 return True
 
         return (n_int % 2) != 0
+
+    def translate(self, dx: float, dy: float) -> None:
+        """Move todos os vértices do polígono por (dx, dy)."""
+        for p in self.pontos:
+            p.x += dx
+            p.y += dy

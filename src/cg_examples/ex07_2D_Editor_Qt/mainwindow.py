@@ -1,4 +1,9 @@
 # pyright: reportIncompatibleMethodOverride=false
+"""Janela principal do editor 2D.
+
+Este módulo define a composição da interface (canvas OpenGL + barra de botões)
+e conecta as ações de UI com a máquina de estados da aplicação.
+"""
 
 import qtawesome as qta
 from PyQt5.QtCore import QSize, Qt, QTimer
@@ -11,7 +16,14 @@ from .view.glcanvas import GLCanvas
 
 
 class MainWindow(QWidget):
-    def __init__(self):
+    """Container principal do editor e ponto de integração View/State."""
+
+    def __init__(self) -> None:
+        """Monta widgets, contexto de estados e timer de repintura.
+
+        Returns:
+            None: Inicializa a instância da janela principal.
+        """
         super().__init__()
 
         self.setWindowTitle("Editor 2D - PyQt + OpenGL")
@@ -67,15 +79,30 @@ class MainWindow(QWidget):
     # Ações dos botões
     # ------------------------------------------------ #
 
-    def on_start_circle(self):
+    def on_start_circle(self) -> None:
+        """Ativa o estado de desenho de círculos.
+
+        Returns:
+            None: Apenas altera o estado atual do contexto.
+        """
         self.state_context.current_state = self.state_context.draw_circle_state
         print("🟢 Estado: Iniciar círculo")
 
-    def on_start_polygon(self):
+    def on_start_polygon(self) -> None:
+        """Ativa o estado de desenho de polígonos e foca o canvas.
+
+        Returns:
+            None: O foco é transferido para receber teclas (Enter/Esc).
+        """
         self.state_context.current_state = self.state_context.draw_polygon_state
         self.canvas.setFocus()  # <- garante que o canvas receba teclas
         print("🟢 Estado: Iniciar poligono")
 
-    def on_exit(self):
+    def on_exit(self) -> None:
+        """Fecha a janela principal e solicita encerramento da aplicação.
+
+        Returns:
+            None: O loop Qt é encerrado pelo fechamento da janela.
+        """
         print("Saindo...")
         self.close()

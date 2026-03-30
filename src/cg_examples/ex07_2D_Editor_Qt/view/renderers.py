@@ -1,5 +1,9 @@
 # view/renderers.py
+"""Primitivas de renderização imediata usadas pelo editor 2D.
 
+As funções deste módulo encapsulam desenho OpenGL (pipeline fixa) para
+círculos, polígonos e segmentos auxiliares, reduzindo duplicação na camada View.
+"""
 
 from OpenGL.GL import (
     GL_ENABLE_BIT,
@@ -22,7 +26,23 @@ from ..model.circulo import Circulo
 from ..model.poligono import Poligono
 
 
-def draw_circle(circle: Circulo, dashed: bool = False, color=(1, 1, 1), width: float = 1.0):
+def draw_circle(
+    circle: Circulo,
+    dashed: bool = False,
+    color: tuple[float, float, float] = (1, 1, 1),
+    width: float = 1.0,
+) -> None:
+    """Desenha círculo aproximado por polilinha.
+
+    Args:
+        circle: Entidade de círculo com centro e raio.
+        dashed: Quando `True`, ativa estilo tracejado.
+        color: Cor RGB em faixa [0, 1].
+        width: Espessura da linha.
+
+    Returns:
+        None: Emite vértices no pipeline OpenGL imediato.
+    """
     glColor3f(*color)
     glLineWidth(width)
     if dashed:
@@ -40,7 +60,23 @@ def draw_circle(circle: Circulo, dashed: bool = False, color=(1, 1, 1), width: f
     glLineWidth(1.0)
 
 
-def draw_polygon(poly: Poligono, open_strip=False, color=(1, 1, 1), width: float = 1.0):
+def draw_polygon(
+    poly: Poligono,
+    open_strip: bool = False,
+    color: tuple[float, float, float] = (1, 1, 1),
+    width: float = 1.0,
+) -> None:
+    """Desenha polígono aberto ou fechado.
+
+    Args:
+        poly: Entidade de polígono com lista de vértices.
+        open_strip: `True` para polilinha aberta, `False` para loop fechado.
+        color: Cor RGB em faixa [0, 1].
+        width: Espessura da linha.
+
+    Returns:
+        None: Emite vértices no pipeline OpenGL imediato.
+    """
     glColor3f(*color)
     glLineWidth(width)
     mode = GL_LINE_STRIP if open_strip else GL_LINE_LOOP
@@ -61,7 +97,20 @@ def draw_segment(
     color=(1.0, 1.0, 1.0),
     width: float = 1.0,
 ) -> None:
-    """Desenha um segmento entre dois pontos; opcionalmente tracejado."""
+    """Desenha um segmento entre dois pontos.
+
+    Args:
+        x0: Coordenada X do ponto inicial.
+        y0: Coordenada Y do ponto inicial.
+        x1: Coordenada X do ponto final.
+        y1: Coordenada Y do ponto final.
+        dashed: Quando `True`, ativa estilo tracejado.
+        color: Cor RGB em faixa [0, 1].
+        width: Espessura da linha.
+
+    Returns:
+        None: Emite vértices no pipeline OpenGL imediato.
+    """
     glColor3f(*color)
     glLineWidth(width)
 

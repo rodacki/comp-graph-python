@@ -1,4 +1,11 @@
 # pyright: reportIncompatibleMethodOverride=false
+"""Widget OpenGL responsável pelo desenho e delegação de eventos do editor.
+
+O canvas concentra o ciclo de renderização (initializeGL/resizeGL/paintGL) e
+encaminha eventos de mouse/teclado para o Context, que por sua vez delega ao
+estado corrente da máquina de estados.
+"""
+
 import logging
 
 from OpenGL.GL import (
@@ -11,7 +18,7 @@ from OpenGL.GL import (
 )
 from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QCursor, QKeyEvent, QMouseEvent
-from PyQt5.QtOpenGL import QGLWidget
+from PyQt5.QtWidgets import QOpenGLWidget
 
 from ..state.context import Context
 from ..view.renderers import draw_circle, draw_polygon
@@ -20,21 +27,46 @@ from .draw_utils import axis, px_to_world
 log = logging.getLogger(__name__)
 
 
-class GLCanvas(QGLWidget):
-    def __init__(self, state_context: Context, parent=None):
+class GLCanvas(QOpenGLWidget):
+    """Canvas OpenGL do editor 2D."""
+
+    def __init__(self, state_context: Context, parent=None) -> None:
+        """Inicializa canvas e configurações básicas de interação.
+
+        Args:
+            state_context: Contexto com estado atual, modelo e variáveis globais.
+            parent: Widget pai Qt, quando aplicável.
+
+        Returns:
+            None: Configura a instância do canvas.
+        """
         super().__init__(parent)
         self.state_context = state_context
         self.setMouseTracking(True)
         self._cross_cursor = QCursor(Qt.CursorShape.CrossCursor)
         self.setFocusPolicy(Qt.StrongFocus)  # <- importante
 
-    def initializeGL(self):
+    def initializeGL(self) -> None:
+        """Configura estado inicial de OpenGL e projeção ortográfica.
+
+        Returns:
+            None: A configuração ocorre no contexto OpenGL já ativo.
+        """
         from ..view.draw_utils import init
 
         glClearColor(0.2, 0.3, 0.4, 1.0)
         init(self.state_context)  # ← importante
 
-    def resizeGL(self, w, h):
+    def resizeGL(self, w: int, h: int) -> None:
+        """Atualiza viewport e métricas para monitores HiDPI.
+
+        Args:
+            w: Largura lógica reportada pelo Qt.
+            h: Altura lógica reportada pelo Qt.
+
+        Returns:
+            None: Atualiza cache global de largura/altura e tamanho de handlers.
+        """
         # Corrige para monitores HiDPI (Retina)
         ratio = self.devicePixelRatioF()
         pixel_w = int(w * ratio)
@@ -45,12 +77,18 @@ class GLCanvas(QGLWidget):
         gv = self.state_context.global_vars
         gv.w = pixel_w
         gv.h = pixel_h
+        gv.device_pixel_ratio = ratio
 
         # --- cálculo do tamanho do handler em coordenadas do mundo ---
         gv.handle_size_world = px_to_world(self.state_context, gv.handle_size_px, "avg")
         # print(f"[resizeGL] Logical: ({w}, {h})  Physical: ({pixel_w}, {pixel_h})  ratio={ratio:.2f}")
 
-    def paintGL(self):
+    def paintGL(self) -> None:
+        """Renderiza eixos, objetos, overlays de seleção e overlay do estado.
+
+        Returns:
+            None: O quadro é desenhado no framebuffer do QOpenGLWidget.
+        """
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # type: ignore
         glLoadIdentity()
 
@@ -96,43 +134,87 @@ class GLCanvas(QGLWidget):
     def mousePressEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        log.debug(
-            "GLCanvas.mousePressEvent: button=%s pos=(%d,%d)", event.button(), event.x(), event.y()
-        )
+        """Encaminha clique do mouse para o estado corrente.
+
+        Args:
+            event: Evento de pressionamento do mouse emitido pelo Qt.
+
+        Returns:
+            None: Solicita repaint após delegar ao contexto.
+        """
         self.state_context.mouse_press_event(event)
         self.update()
 
     def mouseMoveEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        log.debug("GLCanvas.mouseMoveEvent: pos=(%d,%d)", event.x(), event.y())
+        """Encaminha movimento do mouse para atualização interativa.
+
+        Args:
+            event: Evento de movimento do mouse emitido pelo Qt.
+
+        Returns:
+            None: Solicita repaint após delegar ao contexto.
+        """
         self.state_context.mouse_move_event(event)
+        self.update()
+
+    def mouseReleaseEvent(
+        self, event: QMouseEvent
+    ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+        """Encaminha o release para o estado atual (ex.: término de arrasto)."""
+        self.state_context.mouse_release_event(event)
         self.update()
 
     def keyPressEvent(
         self, event: QKeyEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        log.debug("GLCanvas.keyPressEvent: key=%s", event.key())
+        """Encaminha evento de teclado para o estado corrente.
+
+        Args:
+            event: Evento de tecla pressionada.
+
+        Returns:
+            None: Solicita repaint para refletir efeitos imediatos.
+        """
         self.state_context.key_press_event(event)
         self.update()
 
     def mouseDoubleClickEvent(
         self, event: QMouseEvent
     ) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        log.debug(
-            "GLCanvas.mouseDoubleClickEvent: button=%s pos=(%d,%d)",
-            event.button(),
-            event.x(),
-            event.y(),
-        )
-        """Encaminha o duplo clique ao estado atual."""
+        """Encaminha duplo clique para o estado corrente.
+
+        Args:
+            event: Evento de duplo clique do mouse.
+
+        Returns:
+            None: Solicita repaint após delegar ao contexto.
+        """
+        log.info("mouseDoubleClick_event")
         self.state_context.mouse_double_click_event(event)
         self.update()
 
     # Ao entrar na área do canvas, mude o cursor
     def enterEvent(self, event: QEvent) -> None:
+        """Define cursor de cruz ao entrar na área do canvas.
+
+        Args:
+            event: Evento Qt de entrada do cursor.
+
+        Returns:
+            None: Atualiza apenas o cursor local.
+        """
         self.setCursor(self._cross_cursor)
 
     # Ao sair, restaure para o padrão
     def leaveEvent(self, event: QEvent) -> None:
+        """Restaura o cursor padrão ao sair da área do canvas.
+
+        Args:
+            event: Evento Qt de saída do cursor.
+
+        Returns:
+            None: Limpa o cursor customizado do widget.
+        """
         self.unsetCursor()  # volta ao cursor do sistema/janela

@@ -59,7 +59,7 @@ poetry install
 ### Execução do editor
 
 ```bash
-poetry run python -m src.cg_examples.ex07_2D_Editor_Qt
+poetry run ex07-pyqt-opengl
 ```
 
 ---
@@ -106,6 +106,5 @@ Projeto: Computação Gráfica com Python
 - Implementar transformações geométricas (translação, rotação, escala).
 - Adicionar ferramentas de manipulação interativa (arrastar, girar, redimensionar).
 - Introduzir sistema de camadas (layers) e suporte a gravação de cena.
-
 
 

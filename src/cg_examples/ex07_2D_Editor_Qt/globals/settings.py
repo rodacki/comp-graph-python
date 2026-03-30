@@ -1,4 +1,10 @@
 # arquivo para definicao de variaveis globais do projeto
+"""Configurações e variáveis globais compartilhadas pelo editor.
+
+O objetivo desta estrutura é centralizar estado de interface e parâmetros
+globais usados por múltiplos estados e pela camada de renderização.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -15,6 +21,24 @@ if TYPE_CHECKING:
 # ----------------------------------------------------- #
 @dataclass
 class GlobalDefinitions:
+    """Container de estado global do editor 2D.
+
+    Attributes:
+        contents: Lista genérica para dados auxiliares legados.
+        selected: Objetos atualmente selecionados.
+        should_exit: Flag auxiliar de encerramento.
+        left/right/bottom/top: Limites da janela em coordenadas de mundo.
+        w/h: Dimensões do viewport em pixels físicos.
+        device_pixel_ratio: Fator de escala HiDPI do monitor.
+        wind: Referência opcional para janela principal (legado).
+        poligono: Polígono temporário em construção.
+        circulo: Círculo temporário em construção.
+        modelo: Repositório principal das primitivas da cena.
+        selection_tolerance_px: Tolerância de hit-test em pixels lógicos.
+        handle_size_px: Tamanho visual das alças (handlers) em pixels lógicos.
+        handle_size_world: Cache do tamanho das alças em coordenadas de mundo.
+    """
+
     contents: list[Any] = field(default_factory=list)
     selected: list[object] = field(default_factory=list)  # objetos selecionados
     should_exit: bool = False
@@ -24,6 +48,7 @@ class GlobalDefinitions:
     top: float = 500.0
     w: int = 500
     h: int = 500
+    device_pixel_ratio: float = 1.0
     wind: Any | None = None
     poligono: Any | None = None
     circulo: Any | None = None

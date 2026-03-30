@@ -3,13 +3,12 @@ repos:
     rev: 24.8.0
     hooks:
       - id: black
-        args:
-          - src/cg_examples/ex07_2D_Editor_Qt
+        files: ^src/cg_examples/ex07_2D_Editor_Qt/.*\.py$
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
     hooks:
       - id: ruff
+        files: ^src/cg_examples/ex07_2D_Editor_Qt/.*\.py$
         args:
           - --fix
-          - src/cg_examples/ex07_2D_Editor_Qt
