@@ -54,10 +54,10 @@ poetry.toml
 # Arquivos de configuração locais
 .env
 .env.*
+opencode.json
 
 # Diversos
 *.so
 *.dll
 
 corrigir.txt
-
