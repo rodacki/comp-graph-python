@@ -38,6 +38,7 @@ ex04-glfw = "cg_examples.ex04_test_glfw.__main__:main"
 ex05-color = "cg_examples.ex05_ColorPicker.__main__:main"
 ex06-editor = "cg_examples.ex06_2D_editor.__main__:main"
 ex07-pyqt-opengl = "cg_examples.ex07_2D_Editor_Qt.__main__:main"
+ex08-simple-ogl-modern = "cg_examples.ex08_2D_simple_ogl_modern.__main__:main"
 
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
@@ -84,6 +85,7 @@ combine-as-imports = true
 "src/cg_examples/ex02_test_glut/__main__.py" = ["N802", "N806"]
 "src/cg_examples/ex07_2D_Editor_Qt/view/glcanvas.py" = ["N802"]
 "src/cg_examples/ex07_2D_Editor_Qt/state/idle_state.py" = ["N802"]
+"src/cg_examples/ex08_2D_simple_ogl_modern/view/glcanvas.py" = ["N802"]
 
 [tool.mypy]
 python_version = "3.12"
