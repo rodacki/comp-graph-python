@@ -35,6 +35,9 @@ var/
 .AppleDouble
 .LSOverride
 
+# Saidas geradas por scripts das aulas (recriaveis rodando o script)
+aulas/**/triangulo_gpu.png
+
 # Testes
 .pytest_cache/
 coverage.xml
