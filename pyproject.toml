@@ -41,6 +41,7 @@ ex05-color = "cg_examples.ex05_ColorPicker.__main__:main"
 ex06-editor = "cg_examples.ex06_2D_editor.__main__:main"
 ex07-pyqt-opengl = "cg_examples.ex07_2D_Editor_Qt.__main__:main"
 ex08-simple-ogl-modern = "cg_examples.ex08_2D_simple_ogl_modern.__main__:main"
+ex09-pyglet-cad = "cg_examples.ex09_pyglet_cad.__main__:main"
 
 [tool.poetry.group.moderngl.dependencies]
 moderngl = "^5.12.0"
