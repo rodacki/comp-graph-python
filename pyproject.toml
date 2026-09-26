@@ -21,7 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 mac = [
-  "pyobjc-framework-Cocoa>=10.2,<11.0"
+  "pyobjc-framework-Cocoa>=10.2,<13.0"
 ]
 
 [build-system]
